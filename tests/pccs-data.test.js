@@ -64,11 +64,13 @@ assert.strictEqual(data.findHue(2).symbol, "2:R", "2:R 記號");
 // ---- 色調資料 ----
 assert.strictEqual(data.PCCS_TONES.length, 12, "12 色調");
 // 清濁分類（JPCA 考點）
+// 清色 = 色立體邊界上的色調：明清色（純色+白）p/lt/b、暗清色（純色+黑）dp/dk/dkg
+// 濁色（中間色）= 含灰的內部色調：s/sf/d/ltg/g
 var expectedCategories = {
   v: "純色",
   b: "明清色", lt: "明清色", p: "明清色",
-  dp: "暗清色", dk: "暗清色",
-  s: "濁色", sf: "濁色", d: "濁色", ltg: "濁色", g: "濁色", dkg: "濁色"
+  dp: "暗清色", dk: "暗清色", dkg: "暗清色",
+  s: "濁色", sf: "濁色", d: "濁色", ltg: "濁色", g: "濁色"
 };
 Object.keys(expectedCategories).forEach(function (id) {
   assert.strictEqual(data.findTone(id).category, expectedCategories[id], id + " 清濁分類");
@@ -80,10 +82,11 @@ data.PCCS_TONES.forEach(function (t) {
   if (t.category === "暗清色") assert.strictEqual(t.mix.type, "black", t.id + " 暗清色加黑");
   if (t.category === "濁色") assert.strictEqual(t.mix.type, "gray", t.id + " 濁色加灰");
 });
-// 加白量遞增：b < lt < p；加黑量遞增：dp < dk
+// 加白量遞增：b < lt < p；加黑量遞增：dp < dk < dkg
 assert.ok(data.findTone("b").mix.amount < data.findTone("lt").mix.amount, "b < lt 加白量");
 assert.ok(data.findTone("lt").mix.amount < data.findTone("p").mix.amount, "lt < p 加白量");
 assert.ok(data.findTone("dp").mix.amount < data.findTone("dk").mix.amount, "dp < dk 加黑量");
+assert.ok(data.findTone("dk").mix.amount < data.findTone("dkg").mix.amount, "dk < dkg 加黑量");
 // 每個色調都有中日文印象詞
 data.PCCS_TONES.forEach(function (t) {
   assert.ok(t.impressions.zh.length > 0, t.id + " 中文印象詞");

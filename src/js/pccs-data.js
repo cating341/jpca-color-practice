@@ -140,8 +140,8 @@ var PCCS_TONES = [
     mix: { type: "gray", amount: 0.75, gray: "#707070" },
     spotPos: { x: 20, y: 190 }, wheelPos: { x: 110, y: 340 },
     impressions: { zh: ["帶灰的", "混濁", "樸素"], jp: ["灰みの", "濁った", "地味な"] } },
-  { id: "dkg", jpName: "ダークグレイッシュ", jpKana: "くらいはいみの", zhName: "暗灰", category: "濁色",
-    mix: { type: "gray", amount: 0.80, gray: "#383838" },
+  { id: "dkg", jpName: "ダークグレイッシュ", jpKana: "くらいはいみの", zhName: "暗灰", category: "暗清色",
+    mix: { type: "black", amount: 0.80 },
     spotPos: { x: 20, y: 280 }, wheelPos: { x: 110, y: 500 },
     impressions: { zh: ["帶暗灰的", "陰鬱", "厚重", "堅硬", "陽剛"], jp: ["暗い灰みの", "陰気な", "重い", "固い", "男性的な"] } }
 ];
