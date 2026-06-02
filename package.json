@@ -1,0 +1,10 @@
+{
+  "name": "jpca-practice",
+  "version": "0.1.0",
+  "description": "JPCA exam practice web app.",
+  "scripts": {
+    "start": "node server/index.js",
+    "dev": "npx serve src"
+  },
+  "license": "MIT"
+}

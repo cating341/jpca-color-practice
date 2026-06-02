@@ -1,0 +1,23 @@
+:root {
+  --fg: #1a1a1a;
+  --bg: #ffffff;
+  --accent: #2563eb;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+  color: var(--fg);
+  background: var(--bg);
+  line-height: 1.6;
+}
+
+header, main {
+  max-width: 768px;
+  margin: 0 auto;
+  padding: 1.5rem;
+}
+
+h1 { color: var(--accent); }
