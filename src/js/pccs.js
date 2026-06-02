@@ -115,13 +115,57 @@
     updateToneSpots();
   }
 
-  // ---- 詳情彈窗（Task 6 實作，此處先放佔位避免 ReferenceError） ----
+  // ---- 詳情彈窗 ----
 
   function showDetail(toneId, hueNum) {
-    // Task 6 實作
+    var tone = findTone(toneId);
+    var hue = findHue(hueNum);
+    var color = getColor(toneId, hueNum);
+    var notation = toneId === "v" ? "v" + hueNum : toneId + hueNum;
+
+    document.getElementById("popup-body").innerHTML =
+      '<div class="popup-color-chip" style="background:' + color + '"></div>' +
+      '<p class="popup-notation">' + notation + "</p>" +
+      '<p class="popup-detail-row"><b>色調：</b>' + tone.id + "　" + tone.jpName + "（" + tone.jpKana + "）｜" + tone.zhName + "</p>" +
+      '<p class="popup-detail-row"><b>色相：</b>' + hue.symbol + "　" + hue.jpName + "</p>" +
+      '<p class="popup-detail-row"><b>HEX：</b>' + color + "</p>" +
+      '<p class="popup-detail-row"><b>清濁分類：</b>' + tone.category + describeMix(tone) + "</p>";
+
+    document.getElementById("detail-popup").classList.remove("hidden");
+    document.getElementById("popup-backdrop").classList.remove("hidden");
+  }
+
+  // 無彩色（灰階）詳情
+  function showGrayDetail(gray) {
+    document.getElementById("popup-body").innerHTML =
+      '<div class="popup-color-chip" style="background:' + gray.hex + '"></div>' +
+      '<p class="popup-notation">' + gray.symbol + "-" + gray.value + "</p>" +
+      '<p class="popup-detail-row"><b>名稱：</b>' + gray.jpName + "</p>" +
+      '<p class="popup-detail-row"><b>明度：</b>' + gray.value + "</p>" +
+      '<p class="popup-detail-row"><b>HEX：</b>' + gray.hex + "</p>" +
+      '<p class="popup-detail-row"><b>分類：</b>無彩色</p>';
+
+    document.getElementById("detail-popup").classList.remove("hidden");
+    document.getElementById("popup-backdrop").classList.remove("hidden");
+  }
+
+  function describeMix(tone) {
+    if (!tone.mix) return "（未混合）";
+    var pct = Math.round(tone.mix.amount * 100) + "%";
+    if (tone.mix.type === "white") return "（純色＋白 " + pct + "）";
+    if (tone.mix.type === "black") return "（純色＋黑 " + pct + "）";
+    return "（純色＋灰 " + pct + "）";
+  }
+
+  function hideDetail() {
+    document.getElementById("detail-popup").classList.add("hidden");
+    document.getElementById("popup-backdrop").classList.add("hidden");
   }
 
   // ---- 初始化 ----
+
+  document.getElementById("popup-close").addEventListener("click", hideDetail);
+  document.getElementById("popup-backdrop").addEventListener("click", hideDetail);
 
   renderHueWheel();
   renderToneSpots();
