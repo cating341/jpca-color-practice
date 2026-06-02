@@ -286,6 +286,42 @@
     });
   }
 
+  // ---- 區塊 4：色調印象卡片 ----
+
+  function renderImpressionCards() {
+    var container = document.getElementById("impression-cards");
+
+    PCCS_TONES.forEach(function (tone) {
+      var card = document.createElement("div");
+      card.className = "impression-card";
+
+      var swatchesHtml = EVEN_HUES.map(function (hueNum) {
+        return '<div class="card-swatch" data-tone="' + tone.id + '" data-hue="' + hueNum + '" ' +
+               'style="background:' + getColor(tone.id, hueNum) + '"></div>';
+      }).join("");
+
+      card.innerHTML =
+        "<h3>" + tone.id + "　" + tone.jpName + "（" + tone.jpKana + "）" +
+        '<span class="category-badge">' + tone.category + "</span></h3>" +
+        '<p class="card-zh-name">' + tone.zhName + "色調</p>" +
+        '<div class="card-swatches">' + swatchesHtml + "</div>" +
+        '<div class="card-impressions">' +
+        '<span class="imp-label">イメージ（日）：</span>' + tone.impressions.jp.join("、") + "<br>" +
+        '<span class="imp-label">印象（中）：</span>' + tone.impressions.zh.join("、") +
+        "</div>";
+
+      container.appendChild(card);
+    });
+
+    // 色票點擊 → 詳情（事件委派）
+    container.addEventListener("click", function (e) {
+      var target = e.target;
+      if (target.classList.contains("card-swatch")) {
+        showDetail(target.dataset.tone, parseInt(target.dataset.hue, 10));
+      }
+    });
+  }
+
   // ---- 初始化 ----
 
   document.getElementById("popup-close").addEventListener("click", hideDetail);
@@ -294,5 +330,6 @@
   renderHueWheel();
   renderToneSpots();
   renderToneMap();
+  renderImpressionCards();
   selectHue(8); // 預設 8:Y
 })();
