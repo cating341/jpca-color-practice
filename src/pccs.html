@@ -14,6 +14,15 @@
   </header>
 
   <main class="pccs-main">
+    <!-- 區塊 3：Tone Map -->
+    <section id="tone-map-section" class="pccs-section">
+      <h2>PCCS色調表</h2>
+      <p class="section-desc">12 個色調的色相環，依「明度（縱）× 彩度（橫）」配置，左側為無彩色灰階軸。點擊任一花瓣可查看該色的詳情。</p>
+      <div class="tone-map-scroll">
+        <div id="tone-map" class="tone-map-wrap"></div>
+      </div>
+    </section>
+
     <!-- 區塊 2：色彩互動區 -->
     <section id="interactive-section" class="pccs-section">
       <h2>色相 × 色調</h2>
@@ -33,15 +42,6 @@
           <p class="selected-hue-label">目前色相：<b id="selected-hue-name"></b></p>
           <svg id="hue-wheel" viewBox="-170 -170 340 340"></svg>
         </div>
-      </div>
-    </section>
-
-    <!-- 區塊 3：Tone Map -->
-    <section id="tone-map-section" class="pccs-section">
-      <h2>トーン別色相環（Tone Map）</h2>
-      <p class="section-desc">12 個色調的色相環，依「明度（縱）× 彩度（橫）」配置，左側為無彩色灰階軸。點擊任一花瓣可查看該色的詳情。</p>
-      <div class="tone-map-scroll">
-        <div id="tone-map" class="tone-map-wrap"></div>
       </div>
     </section>
 

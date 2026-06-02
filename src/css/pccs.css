@@ -114,12 +114,20 @@
   white-space: nowrap;
 }
 
-/* 灰階軸 */
-.gray-axis { position: absolute; left: 10px; top: 20px; width: 80px; }
+/* 灰階軸（均勻分布於圖表上下界之間） */
+.gray-axis {
+  position: absolute;
+  left: 10px;
+  top: 20px;
+  bottom: 20px;
+  width: 80px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
 .gray-axis .gray-block {
   display: flex; align-items: center; gap: 6px;
   cursor: pointer;
-  margin-bottom: 2px;
 }
 .gray-axis .gray-chip { width: 40px; height: 56px; border: 1px solid #ddd; }
 .gray-axis .gray-label { font-size: 0.6rem; color: #777; }
