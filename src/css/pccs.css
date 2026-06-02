@@ -168,6 +168,7 @@
 /* ---- 響應式 ---- */
 @media (max-width: 900px) {
   .interactive-wrap { flex-direction: column-reverse; align-items: center; }
-  .tone-spot-area { min-width: 0; }
+  .tone-spot-area { min-width: 0; max-width: 100%; overflow-x: auto; }
+  .hue-wheel-area { min-width: 0; }
   .impression-cards { grid-template-columns: 1fr; }
 }
