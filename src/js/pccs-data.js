@@ -93,7 +93,7 @@ var PCCS_HUES = (function () {
 
 // ---- 色調資料 ----
 // category：純色｜明清色（純色+白）｜暗清色（純色+黑）｜濁色（純色+灰）
-// spotPos：區塊 2 色調圖座標（px，容器 380×360）
+// spotPos：區塊 2 色調圖座標（px，容器 400×400，見 pccs.css .tone-spot-map）
 // wheelPos：區塊 3 Tone Map 花環左上角座標（px，容器 920×660）
 var PCCS_TONES = [
   { id: "v", jpName: "ビビッド", jpKana: "さえた", zhName: "鮮豔", category: "純色",
