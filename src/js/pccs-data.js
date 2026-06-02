@@ -176,7 +176,11 @@ function findTone(id) {
 
 // 取得「色調 × 色相」的顏色（例：getColor("lt", 8) = 淺色調的黃）
 function getColor(toneId, hueNum) {
-  return mixColor(findHue(hueNum).vivid, findTone(toneId).mix);
+  var hue = findHue(hueNum);
+  var tone = findTone(toneId);
+  if (!hue) throw new Error("getColor: unknown hueNum " + hueNum);
+  if (!tone) throw new Error("getColor: unknown toneId " + toneId);
+  return mixColor(hue.vivid, tone.mix);
 }
 
 // ---- Node 匯出（測試用；瀏覽器中此區塊不執行） ----

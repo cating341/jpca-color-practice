@@ -114,4 +114,8 @@ for (var gi = 1; gi < data.PCCS_GRAYS.length; gi++) {
   assert.ok(data.PCCS_GRAYS[gi].value < data.PCCS_GRAYS[gi - 1].value, "灰階明度遞減 " + gi);
 }
 
+// getColor 防護：未知輸入應拋出描述性錯誤
+assert.throws(function () { data.getColor("xx", 8); }, /unknown toneId/, "未知色調拋錯");
+assert.throws(function () { data.getColor("v", 99); }, /unknown hueNum/, "未知色相拋錯");
+
 console.log("Task 3 tests passed");
