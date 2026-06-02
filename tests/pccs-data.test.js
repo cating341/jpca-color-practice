@@ -33,3 +33,85 @@ assert.strictEqual(
 })();
 
 console.log("Task 2 tests passed");
+
+// ---- 色相資料 ----
+assert.strictEqual(data.PCCS_HUES.length, 24, "24 色相");
+// 編號 1–24 依序排列
+data.PCCS_HUES.forEach(function (h, i) {
+  assert.strictEqual(h.num, i + 1, "色相編號 " + (i + 1));
+});
+// 已確認的純色基底值（與設計文件一致）
+assert.strictEqual(data.findHue(2).vivid, "#e60033", "v2 赤");
+assert.strictEqual(data.findHue(8).vivid, "#ffd400", "v8 黄");
+assert.strictEqual(data.findHue(12).vivid, "#009154", "v12 緑（加深版）");
+assert.strictEqual(data.findHue(18).vivid, "#19438c", "v18 青（加深版）");
+assert.strictEqual(data.findHue(24).vivid, "#b73165", "v24 赤紫（加深版）");
+// 奇數色相 = 相鄰偶數內插
+assert.strictEqual(
+  data.findHue(3).vivid,
+  data.interpolateHex(data.findHue(2).vivid, data.findHue(4).vivid),
+  "v3 = v2/v4 內插"
+);
+assert.strictEqual(
+  data.findHue(1).vivid,
+  data.interpolateHex(data.findHue(24).vivid, data.findHue(2).vivid),
+  "v1 = v24/v2 內插（環狀）"
+);
+// 色相記號
+assert.strictEqual(data.findHue(8).symbol, "8:Y", "8:Y 記號");
+assert.strictEqual(data.findHue(2).symbol, "2:R", "2:R 記號");
+
+// ---- 色調資料 ----
+assert.strictEqual(data.PCCS_TONES.length, 12, "12 色調");
+// 清濁分類（JPCA 考點）
+var expectedCategories = {
+  v: "純色",
+  b: "明清色", lt: "明清色", p: "明清色",
+  dp: "暗清色", dk: "暗清色",
+  s: "濁色", sf: "濁色", d: "濁色", ltg: "濁色", g: "濁色", dkg: "濁色"
+};
+Object.keys(expectedCategories).forEach(function (id) {
+  assert.strictEqual(data.findTone(id).category, expectedCategories[id], id + " 清濁分類");
+});
+// 混色類型必須與清濁分類一致
+data.PCCS_TONES.forEach(function (t) {
+  if (t.category === "純色") assert.strictEqual(t.mix, null, t.id + " 純色無混色");
+  if (t.category === "明清色") assert.strictEqual(t.mix.type, "white", t.id + " 明清色加白");
+  if (t.category === "暗清色") assert.strictEqual(t.mix.type, "black", t.id + " 暗清色加黑");
+  if (t.category === "濁色") assert.strictEqual(t.mix.type, "gray", t.id + " 濁色加灰");
+});
+// 加白量遞增：b < lt < p；加黑量遞增：dp < dk
+assert.ok(data.findTone("b").mix.amount < data.findTone("lt").mix.amount, "b < lt 加白量");
+assert.ok(data.findTone("lt").mix.amount < data.findTone("p").mix.amount, "lt < p 加白量");
+assert.ok(data.findTone("dp").mix.amount < data.findTone("dk").mix.amount, "dp < dk 加黑量");
+// 每個色調都有中日文印象詞
+data.PCCS_TONES.forEach(function (t) {
+  assert.ok(t.impressions.zh.length > 0, t.id + " 中文印象詞");
+  assert.ok(t.impressions.jp.length > 0, t.id + " 日文印象詞");
+});
+
+// ---- getColor ----
+assert.strictEqual(data.getColor("v", 8), "#ffd400", "v8 = 純色");
+// 明清色比純色亮（每通道 >=）
+(function () {
+  var vivid = data.hexToRgb(data.getColor("v", 2));
+  var pale = data.hexToRgb(data.getColor("p", 2));
+  assert.ok(pale.r >= vivid.r && pale.g >= vivid.g && pale.b >= vivid.b, "p2 比 v2 亮");
+})();
+// 暗清色比純色暗（每通道 <=）
+(function () {
+  var vivid = data.hexToRgb(data.getColor("v", 2));
+  var dark = data.hexToRgb(data.getColor("dk", 2));
+  assert.ok(dark.r <= vivid.r && dark.g <= vivid.g && dark.b <= vivid.b, "dk2 比 v2 暗");
+})();
+
+// ---- 無彩色 ----
+assert.strictEqual(data.PCCS_GRAYS.length, 9, "9 個無彩色");
+assert.strictEqual(data.PCCS_GRAYS[0].symbol, "W", "第一個是白");
+assert.strictEqual(data.PCCS_GRAYS[8].symbol, "Bk", "最後一個是黑");
+// 明度值遞減
+for (var gi = 1; gi < data.PCCS_GRAYS.length; gi++) {
+  assert.ok(data.PCCS_GRAYS[gi].value < data.PCCS_GRAYS[gi - 1].value, "灰階明度遞減 " + gi);
+}
+
+console.log("Task 3 tests passed");
