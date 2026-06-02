@@ -180,7 +180,7 @@
 
     var n = opts.hueNums.length;
     var petalW = opts.large ? 30 : 20;
-    var petalH = opts.large ? 52 : 32;
+    var petalH = opts.large ? 52 : 26;
     var center = opts.diameter / 2;
     var idx8 = opts.hueNums.indexOf(8);
 
@@ -223,9 +223,16 @@
     centerEl.innerHTML =
       "<b>" + tone.id + "</b>" +
       '<span class="center-jp">' + tone.jpName + "</span>" +
-      '<span class="center-kana">（' + tone.jpKana + "）</span>" +
-      (opts.note ? '<span class="center-note">' + opts.note + "</span>" : "");
+      '<span class="center-kana">（' + tone.jpKana + "）</span>";
     wheel.appendChild(centerEl);
+
+    // 註記（顯示於花環下方）
+    if (opts.note) {
+      var noteEl = document.createElement("div");
+      noteEl.className = "wheel-note";
+      noteEl.textContent = opts.note;
+      wheel.appendChild(noteEl);
+    }
 
     parent.appendChild(wheel);
   }
