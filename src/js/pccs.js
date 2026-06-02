@@ -162,6 +162,123 @@
     document.getElementById("popup-backdrop").classList.add("hidden");
   }
 
+  // ---- 區塊 3：Tone Map（トーン別色相環） ----
+
+  var EVEN_HUES = [2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 24];
+  var ALL_HUES = PCCS_HUES.map(function (h) { return h.num; });
+
+  // 花環：petals 繞中心排列，8 在正上方、順時針
+  // opts: { toneId, hueNums, diameter, x, y, large, note }
+  function renderFlowerWheel(parent, opts) {
+    var tone = findTone(opts.toneId);
+    var wheel = document.createElement("div");
+    wheel.className = "flower-wheel";
+    wheel.style.left = opts.x + "px";
+    wheel.style.top = opts.y + "px";
+    wheel.style.width = opts.diameter + "px";
+    wheel.style.height = opts.diameter + "px";
+
+    var n = opts.hueNums.length;
+    var petalW = opts.large ? 30 : 20;
+    var petalH = opts.large ? 52 : 32;
+    var center = opts.diameter / 2;
+    var idx8 = opts.hueNums.indexOf(8);
+
+    opts.hueNums.forEach(function (hueNum, i) {
+      var angle = (i - idx8) * (360 / n);
+
+      var petal = document.createElement("div");
+      petal.className = "petal";
+      petal.dataset.tone = opts.toneId;
+      petal.dataset.hue = hueNum;
+      petal.style.width = petalW + "px";
+      petal.style.height = petalH + "px";
+      petal.style.left = (center - petalW / 2) + "px";
+      petal.style.top = "0px";
+      petal.style.transformOrigin = (petalW / 2) + "px " + center + "px";
+      petal.style.transform = "rotate(" + angle + "deg)";
+      petal.style.background = getColor(opts.toneId, hueNum);
+      petal.addEventListener("click", function () {
+        showDetail(opts.toneId, hueNum);
+        if (opts.toneId === "v") highlightHueAcrossTones(hueNum);
+      });
+      wheel.appendChild(petal);
+
+      // 色相編號（花瓣外側）
+      var lp = polar(center + 10, angle);
+      var num = document.createElement("div");
+      num.className = "petal-num";
+      num.style.left = (center + lp.x) + "px";
+      num.style.top = (center + lp.y) + "px";
+      num.textContent = hueNum;
+      wheel.appendChild(num);
+    });
+
+    // 中心標籤
+    var centerEl = document.createElement("div");
+    centerEl.className = "wheel-center";
+    var centerSize = opts.diameter - petalH * 2 - 16;
+    centerEl.style.width = centerSize + "px";
+    centerEl.style.height = centerSize + "px";
+    centerEl.innerHTML =
+      "<b>" + tone.id + "</b>" +
+      '<span class="center-jp">' + tone.jpName + "</span>" +
+      '<span class="center-kana">（' + tone.jpKana + "）</span>" +
+      (opts.note ? '<span class="center-note">' + opts.note + "</span>" : "");
+    wheel.appendChild(centerEl);
+
+    parent.appendChild(wheel);
+  }
+
+  // 灰階軸（W → Bk）
+  function renderGrayAxis(parent) {
+    var axis = document.createElement("div");
+    axis.className = "gray-axis";
+    PCCS_GRAYS.forEach(function (gray) {
+      var block = document.createElement("div");
+      block.className = "gray-block";
+      block.innerHTML =
+        '<div class="gray-chip" style="background:' + gray.hex + '"></div>' +
+        '<div class="gray-label">' + gray.symbol + "<br>" + gray.value + "</div>";
+      block.addEventListener("click", function () { showGrayDetail(gray); });
+      axis.appendChild(block);
+    });
+    parent.appendChild(axis);
+  }
+
+  // 點擊 v 大色環 → 高亮所有色調中的同色相花瓣
+  function highlightHueAcrossTones(hueNum) {
+    var petals = document.querySelectorAll("#tone-map .petal");
+    for (var i = 0; i < petals.length; i++) {
+      if (parseInt(petals[i].dataset.hue, 10) === hueNum) {
+        petals[i].classList.add("highlight");
+      } else {
+        petals[i].classList.remove("highlight");
+      }
+    }
+  }
+
+  function renderToneMap() {
+    var container = document.getElementById("tone-map");
+
+    // 灰階軸（最左側）
+    renderGrayAxis(container);
+
+    // 11 個小花環＋ v 大色環（位置定義於 pccs-data.js 的 wheelPos）
+    PCCS_TONES.forEach(function (tone) {
+      var isV = tone.id === "v";
+      renderFlowerWheel(container, {
+        toneId: tone.id,
+        hueNums: isV ? ALL_HUES : EVEN_HUES,
+        diameter: isV ? 300 : 130,
+        x: tone.wheelPos.x,
+        y: tone.wheelPos.y,
+        large: isV,
+        note: tone.id === "s" ? "※配色カード199a未収録" : null
+      });
+    });
+  }
+
   // ---- 初始化 ----
 
   document.getElementById("popup-close").addEventListener("click", hideDetail);
@@ -169,5 +286,6 @@
 
   renderHueWheel();
   renderToneSpots();
+  renderToneMap();
   selectHue(8); // 預設 8:Y
 })();
