@@ -32,8 +32,16 @@
   border-right: 1px dashed #ddd; padding-right: 4px;
 }
 .axis-x {
-  bottom: 10px; left: 10px; right: 0;
-  text-align: center; border-top: 1px dashed #ddd; padding-top: 4px;
+  bottom: 0; left: 0; right: 0;
+  height: 40px;
+  border-top: 1px dashed #ddd;
+}
+.axis-seg {
+  position: absolute;
+  top: 4px;
+  text-align: center;
+  line-height: 1.5;
+  white-space: nowrap;
 }
 
 .tone-spot {
