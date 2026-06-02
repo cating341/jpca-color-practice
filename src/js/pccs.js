@@ -200,7 +200,6 @@
       petal.style.background = getColor(opts.toneId, hueNum);
       petal.addEventListener("click", function () {
         showDetail(opts.toneId, hueNum);
-        if (opts.toneId === "v") highlightHueAcrossTones(hueNum);
       });
       wheel.appendChild(petal);
 
@@ -251,18 +250,6 @@
       axis.appendChild(block);
     });
     parent.appendChild(axis);
-  }
-
-  // 點擊 v 大色環 → 高亮所有色調中的同色相花瓣
-  function highlightHueAcrossTones(hueNum) {
-    var petals = document.querySelectorAll("#tone-map .petal");
-    for (var i = 0; i < petals.length; i++) {
-      if (parseInt(petals[i].dataset.hue, 10) === hueNum) {
-        petals[i].classList.add("highlight");
-      } else {
-        petals[i].classList.remove("highlight");
-      }
-    }
   }
 
   function renderToneMap() {

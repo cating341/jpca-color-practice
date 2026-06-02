@@ -72,11 +72,6 @@
   transition: transform 0.15s;
 }
 .flower-wheel .petal:hover { filter: brightness(1.1); }
-.flower-wheel .petal.highlight {
-  outline: 3px solid var(--fg);
-  outline-offset: 1px;
-  z-index: 2;
-}
 .flower-wheel .petal-num {
   position: absolute;
   font-size: 9px; color: #888;
