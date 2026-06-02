@@ -21,3 +21,18 @@ header, main {
 }
 
 h1 { color: var(--accent); }
+
+.topic-nav { margin-top: 1.5rem; }
+
+.topic-card {
+  display: block;
+  border: 1px solid #e5e5e5;
+  border-radius: 8px;
+  padding: 1rem 1.25rem;
+  text-decoration: none;
+  color: var(--fg);
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+.topic-card:hover { border-color: var(--accent); box-shadow: 0 2px 8px rgba(37, 99, 235, 0.12); }
+.topic-card h2 { margin: 0 0 0.3rem; color: var(--accent); font-size: 1.1rem; }
+.topic-card p { margin: 0; font-size: 0.85rem; color: #777; }

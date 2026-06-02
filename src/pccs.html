@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PCCS 色彩體系 | JPCA Practice</title>
+  <link rel="stylesheet" href="./css/style.css" />
+  <link rel="stylesheet" href="./css/pccs.css" />
+</head>
+<body>
+  <header class="pccs-header">
+    <h1>PCCS 色彩體系</h1>
+    <a href="./index.html" class="back-link">← 回到首頁</a>
+  </header>
+
+  <main class="pccs-main">
+    <!-- 區塊 2：色彩互動區 -->
+    <section id="interactive-section" class="pccs-section">
+      <h2>色相 × 色調</h2>
+      <p class="section-desc">點擊右側色相環的任一色相，左側色調圖會即時顯示「該色相 × 12 色調」的顏色。點擊色調色塊可查看詳情。</p>
+      <div class="interactive-wrap">
+        <div class="tone-spot-area">
+          <div id="tone-spot-map" class="tone-spot-map">
+            <div class="axis-label axis-y">明度　高 → 低</div>
+            <div class="axis-label axis-x">彩度　低（2s）─────→ 高（9s）</div>
+          </div>
+        </div>
+        <div class="hue-wheel-area">
+          <p class="selected-hue-label">目前色相：<b id="selected-hue-name"></b></p>
+          <svg id="hue-wheel" viewBox="-170 -170 340 340"></svg>
+        </div>
+      </div>
+    </section>
+
+    <!-- 區塊 3：Tone Map -->
+    <section id="tone-map-section" class="pccs-section">
+      <h2>トーン別色相環（Tone Map）</h2>
+      <p class="section-desc">12 個色調的色相環，依「明度（縱）× 彩度（橫）」配置，左側為無彩色灰階軸。點擊 v 大色環的色相，所有色調中的同色相會高亮。</p>
+      <div class="tone-map-scroll">
+        <div id="tone-map" class="tone-map-wrap"></div>
+      </div>
+    </section>
+
+    <!-- 區塊 4：印象卡片 -->
+    <section id="impression-section" class="pccs-section">
+      <h2>色調的印象（トーンのイメージ）</h2>
+      <p class="section-desc">各色調代表的印象（考試重點）。點擊色票可查看詳情。</p>
+      <div id="impression-cards" class="impression-cards"></div>
+    </section>
+  </main>
+
+  <!-- 詳情彈窗 -->
+  <div id="popup-backdrop" class="popup-backdrop hidden"></div>
+  <div id="detail-popup" class="detail-popup hidden">
+    <button id="popup-close" class="popup-close" aria-label="關閉">×</button>
+    <div id="popup-body"></div>
+  </div>
+
+  <script src="./js/pccs-data.js"></script>
+  <script src="./js/pccs.js"></script>
+</body>
+</html>

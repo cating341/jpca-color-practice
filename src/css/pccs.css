@@ -1,0 +1,173 @@
+/* PCCS 視覺化頁面樣式 */
+
+/* ---- 版面 ---- */
+.pccs-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 1.5rem;
+}
+
+.back-link { color: var(--accent); text-decoration: none; font-size: 0.9rem; }
+.back-link:hover { text-decoration: underline; }
+
+.pccs-main { max-width: 960px; margin: 0 auto; padding: 0 1.5rem 3rem; }
+
+.pccs-section { margin-bottom: 3rem; }
+.pccs-section h2 { border-bottom: 2px solid var(--accent); padding-bottom: 0.4rem; }
+.section-desc { color: #555; font-size: 0.9rem; }
+
+/* ---- 區塊 2：色彩互動區 ---- */
+.interactive-wrap { display: flex; gap: 2rem; align-items: flex-start; flex-wrap: wrap; }
+
+.tone-spot-area { flex: 1; min-width: 400px; }
+.tone-spot-map { position: relative; width: 400px; height: 400px; }
+
+.axis-label { position: absolute; font-size: 0.7rem; color: #999; }
+.axis-y {
+  left: -10px; top: 0; bottom: 40px;
+  writing-mode: vertical-rl; text-align: center;
+  border-right: 1px dashed #ddd; padding-right: 4px;
+}
+.axis-x {
+  bottom: 10px; left: 10px; right: 0;
+  text-align: center; border-top: 1px dashed #ddd; padding-top: 4px;
+}
+
+.tone-spot {
+  position: absolute;
+  width: 68px; height: 68px;
+  border-radius: 50%;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.18);
+  transition: background-color 0.3s, transform 0.15s;
+}
+.tone-spot:hover { transform: scale(1.07); }
+.tone-spot b { font-size: 0.85rem; }
+.tone-spot span { font-size: 0.55rem; opacity: 0.85; }
+
+.hue-wheel-area { flex: 1; min-width: 340px; display: flex; flex-direction: column; align-items: center; }
+.selected-hue-label { font-size: 0.9rem; }
+#hue-wheel { width: 100%; max-width: 360px; height: auto; }
+
+#hue-wheel .hue-seg { cursor: pointer; stroke: var(--bg); stroke-width: 1; }
+#hue-wheel .hue-seg:hover { opacity: 0.85; }
+#hue-wheel .hue-seg.active { stroke: var(--fg); stroke-width: 2.5; }
+#hue-wheel text { font-size: 9px; fill: #555; pointer-events: none; }
+#hue-wheel text.active { font-weight: bold; fill: var(--fg); }
+
+/* ---- 區塊 3：Tone Map ---- */
+.tone-map-scroll { overflow-x: auto; }
+.tone-map-wrap { position: relative; width: 900px; height: 660px; }
+
+/* 花環 */
+.flower-wheel { position: absolute; }
+.flower-wheel .petal {
+  position: absolute;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: transform 0.15s;
+}
+.flower-wheel .petal:hover { filter: brightness(1.1); }
+.flower-wheel .petal.highlight {
+  outline: 3px solid var(--fg);
+  outline-offset: 1px;
+  z-index: 2;
+}
+.flower-wheel .petal-num {
+  position: absolute;
+  font-size: 9px; color: #888;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+}
+.wheel-center {
+  position: absolute;
+  left: 50%; top: 50%;
+  transform: translate(-50%, -50%);
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  background: var(--bg);
+  border-radius: 50%;
+  text-align: center;
+  z-index: 1;
+}
+.wheel-center b { font-size: 1rem; }
+.wheel-center .center-jp { font-size: 0.65rem; color: #555; }
+.wheel-center .center-kana { font-size: 0.55rem; color: #999; }
+.wheel-center .center-note { font-size: 0.5rem; color: #bbb; }
+
+/* 灰階軸 */
+.gray-axis { position: absolute; left: 10px; top: 20px; width: 80px; }
+.gray-axis .gray-block {
+  display: flex; align-items: center; gap: 6px;
+  cursor: pointer;
+  margin-bottom: 2px;
+}
+.gray-axis .gray-chip { width: 40px; height: 56px; border: 1px solid #ddd; }
+.gray-axis .gray-label { font-size: 0.6rem; color: #777; }
+
+/* ---- 區塊 4：印象卡片 ---- */
+.impression-cards { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+
+.impression-card {
+  border: 1px solid #e5e5e5;
+  border-radius: 8px;
+  padding: 1rem;
+}
+.impression-card h3 { margin: 0 0 0.2rem; font-size: 1rem; }
+.impression-card .card-zh-name { color: #777; font-size: 0.85rem; }
+.impression-card .category-badge {
+  display: inline-block;
+  font-size: 0.65rem;
+  padding: 0.1rem 0.5rem;
+  border-radius: 99px;
+  background: #f0f0f0;
+  color: #555;
+  margin-left: 0.5rem;
+  vertical-align: middle;
+}
+.impression-card .card-swatches { display: flex; gap: 3px; margin: 0.6rem 0; }
+.impression-card .card-swatch {
+  width: 24px; height: 24px; border-radius: 3px; cursor: pointer;
+}
+.impression-card .card-swatch:hover { filter: brightness(1.1); }
+.impression-card .card-impressions { font-size: 0.8rem; color: #444; line-height: 1.7; }
+.impression-card .card-impressions .imp-label { color: #999; font-size: 0.7rem; }
+
+/* ---- 詳情彈窗 ---- */
+.popup-backdrop {
+  position: fixed; inset: 0;
+  background: rgba(0, 0, 0, 0.35);
+  z-index: 10;
+}
+.detail-popup {
+  position: fixed;
+  left: 50%; top: 50%;
+  transform: translate(-50%, -50%);
+  background: var(--bg);
+  border-radius: 12px;
+  padding: 1.5rem;
+  min-width: 280px;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.25);
+  z-index: 11;
+}
+.popup-close {
+  position: absolute; right: 0.6rem; top: 0.6rem;
+  border: none; background: none;
+  font-size: 1.3rem; cursor: pointer; color: #999;
+}
+.popup-color-chip { width: 100%; height: 80px; border-radius: 8px; margin-bottom: 0.8rem; }
+.popup-notation { font-size: 1.4rem; font-weight: bold; margin: 0; }
+.popup-detail-row { font-size: 0.85rem; color: #555; margin: 0.3rem 0; }
+.popup-detail-row b { color: var(--fg); }
+
+.hidden { display: none; }
+
+/* ---- 響應式 ---- */
+@media (max-width: 900px) {
+  .interactive-wrap { flex-direction: column-reverse; align-items: center; }
+  .tone-spot-area { min-width: 0; }
+  .impression-cards { grid-template-columns: 1fr; }
+}
