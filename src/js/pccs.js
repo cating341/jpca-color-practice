@@ -203,14 +203,16 @@
       });
       wheel.appendChild(petal);
 
-      // 色相編號（花瓣外側）
-      var lp = polar(center + 10, angle);
-      var num = document.createElement("div");
-      num.className = "petal-num";
-      num.style.left = (center + lp.x) + "px";
-      num.style.top = (center + lp.y) + "px";
-      num.textContent = hueNum;
-      wheel.appendChild(num);
+      // 色相編號（花瓣外側）— 僅 v 大色環顯示
+      if (opts.large) {
+        var lp = polar(center + 10, angle);
+        var num = document.createElement("div");
+        num.className = "petal-num";
+        num.style.left = (center + lp.x) + "px";
+        num.style.top = (center + lp.y) + "px";
+        num.textContent = hueNum;
+        wheel.appendChild(num);
+      }
     });
 
     // 中心標籤
