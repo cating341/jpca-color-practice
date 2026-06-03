@@ -33,8 +33,22 @@
     return swatch;
   }
 
-  // 一個範例（色卡列＋說明）
-  // layout：equal → 等寬；accent → 基調5:配合3:重點1；separation → 主色4:分離1:主色4
+  // 重點色小方形（疊在基調色塊內，呈現「大面積中的小面積點綴」）
+  function renderAccentMark(notation) {
+    var hex = getSchemeColor(notation);
+    var mark = document.createElement("div");
+    mark.className = "accent-mark";
+    mark.style.backgroundColor = hex;
+    mark.style.color = textColorFor(hex);
+    mark.textContent = notation;
+    return mark;
+  }
+
+  // 一個範例（色卡列）
+  // layout：
+  //   equal      → 等寬色塊
+  //   accent     → 基調色（大，內疊重點色小方形）＋配合色；資料順序為 [基調, 配合, 重點]
+  //   separation → 主色4:分離1:主色4
   function renderExample(example, layout) {
     var wrap = document.createElement("div");
     wrap.className = "scheme-example";
@@ -42,15 +56,22 @@
     var row = document.createElement("div");
     row.className = "scheme-swatch-row layout-" + layout;
 
-    var flexRatios = null; // equal：全部等寬
-    if (layout === "accent") flexRatios = [5, 3, 1];
-    else if (layout === "separation") flexRatios = [4, 1, 4];
+    if (layout === "accent") {
+      // [基調, 配合, 重點]：基調最寬、配合次之，重點色作小方形疊在基調色塊內
+      var base = renderSwatch(example.colors[0], 5);
+      base.classList.add("accent-base");
+      base.appendChild(renderAccentMark(example.colors[2]));
+      row.appendChild(base);
+      row.appendChild(renderSwatch(example.colors[1], 3));
+    } else {
+      // equal：全部等寬；separation：主色4:分離1:主色4
+      var flexRatios = (layout === "separation") ? [4, 1, 4] : null;
+      example.colors.forEach(function (notation, i) {
+        var grow = flexRatios ? flexRatios[i] : 1;
+        row.appendChild(renderSwatch(notation, grow));
+      });
+    }
 
-    // accent/separation 的資料契約保證恰好 3 色（測試強制驗證），故 flexRatios 對齊；equal 全部等寬
-    example.colors.forEach(function (notation, i) {
-      var grow = flexRatios ? flexRatios[i] : 1;
-      row.appendChild(renderSwatch(notation, grow));
-    });
     wrap.appendChild(row);
     // 不顯示顏色文字標籤；角色與配色性質由色塊（PCCS 記號）、版面比例與區塊標題傳達
     return wrap;
