@@ -1,0 +1,70 @@
+/* 基本配色法頁面樣式 */
+
+/* ---- 版面（沿用 PCCS 頁面 header pattern） ---- */
+.haishoku-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  max-width: 880px;
+  margin: 0 auto;
+  padding: 1.5rem;
+}
+
+.back-link { color: var(--accent); text-decoration: none; font-size: 0.9rem; }
+.back-link:hover { text-decoration: underline; }
+
+.haishoku-main { max-width: 880px; margin: 0 auto; padding: 0 1.5rem 3rem; }
+
+.haishoku-overview {
+  background: #f5f7ff;
+  border-left: 4px solid var(--accent);
+  padding: 0.75rem 1rem;
+}
+
+.haishoku-section { margin-bottom: 3rem; }
+.haishoku-section h2 { border-bottom: 2px solid var(--accent); padding-bottom: 0.4rem; }
+.section-desc { color: #555; font-size: 0.9rem; }
+
+/* ---- 小節 ---- */
+.scheme { margin: 1.5rem 0 2rem; }
+.scheme h3 { margin-bottom: 0.3rem; font-size: 1.05rem; }
+.scheme-desc { color: #555; font-size: 0.9rem; margin-top: 0; }
+
+/* ---- 範例 ---- */
+.scheme-examples {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.25rem;
+}
+
+.scheme-swatch-row {
+  display: flex;
+  gap: 4px;
+  height: 90px;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+/* 分離配色：色塊間不留縫，分離效果由分離色本身呈現 */
+.scheme-swatch-row.layout-separation { gap: 0; }
+
+.scheme-swatch {
+  flex-basis: 0;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  padding-bottom: 6px;
+  font-size: 0.75rem;
+  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.06);
+}
+
+.scheme-example-label {
+  font-size: 0.8rem;
+  color: #555;
+  margin: 0.4rem 0 0;
+}
+
+/* ---- 窄螢幕：範例上下排列 ---- */
+@media (max-width: 700px) {
+  .scheme-examples { grid-template-columns: 1fr; }
+}
