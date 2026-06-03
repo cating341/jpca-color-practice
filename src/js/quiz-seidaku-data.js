@@ -26,9 +26,11 @@ function seidakuLabel(toneId) {
   throw new Error("seidakuLabel: 純色 (v) 不參與清濁測驗");
 }
 
-// 測驗使用的 11 個色調（排除 v）
+// 測驗使用的 10 個色調
+// 排除 v（純色，無清濁屬性）與 s（ストロング：加灰量僅 20%，視覺上接近清色，
+// 且為配色カード199a未収録色調，不適合作為清濁判斷題目）
 var SEIDAKU_TONES = _pccs.PCCS_TONES
-  .filter(function (t) { return t.category !== "純色"; })
+  .filter(function (t) { return t.category !== "純色" && t.id !== "s"; })
   .map(function (t) { return t.id; });
 
 // ---- 題庫枚舉 ----

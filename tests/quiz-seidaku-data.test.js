@@ -26,21 +26,23 @@ assert.strictEqual(quiz.seidakuLabel("g"), "濁色（中間色）", "g 標籤");
 assert.throws(function () { quiz.seidakuLabel("v"); }, /純色/, "v 標籤拋出錯誤");
 assert.throws(function () { quiz.seidakuLabel("xx"); }, /unknown/, "未知色調標籤拋出錯誤");
 
-// 測驗使用的色調：11 個、不含 v
-assert.strictEqual(quiz.SEIDAKU_TONES.length, 11, "11 個測驗色調");
+// 測驗使用的色調：10 個、不含 v（純色）與 s（加灰量低，視覺接近清色）
+assert.strictEqual(quiz.SEIDAKU_TONES.length, 10, "10 個測驗色調");
 assert.ok(quiz.SEIDAKU_TONES.indexOf("v") === -1, "不含 v");
+assert.ok(quiz.SEIDAKU_TONES.indexOf("s") === -1, "不含 s");
 
 console.log("Task 1 tests passed");
 
 // ---- 題庫枚舉 ----
-// 1 清 + 3 濁：C(6,1)×C(5,3) = 60；1 濁 + 3 清：C(5,1)×C(6,3) = 100；共 160
-assert.strictEqual(quiz.SEIDAKU_COMBOS.length, 160, "題庫共 160 組");
+// 1 清 + 3 濁：C(6,1)×C(4,3) = 24；1 濁 + 3 清：C(4,1)×C(6,3) = 80；共 104
+assert.strictEqual(quiz.SEIDAKU_COMBOS.length, 104, "題庫共 104 組");
 
 quiz.SEIDAKU_COMBOS.forEach(function (combo, idx) {
-  // 每組剛好 4 個互異色調、不含 v
+  // 每組剛好 4 個互異色調、不含 v 與 s
   assert.strictEqual(combo.tones.length, 4, "組合 " + idx + " 有 4 個色調");
   assert.strictEqual(new Set(combo.tones).size, 4, "組合 " + idx + " 色調互異");
   assert.ok(combo.tones.indexOf("v") === -1, "組合 " + idx + " 不含 v");
+  assert.ok(combo.tones.indexOf("s") === -1, "組合 " + idx + " 不含 s");
 
   // oddTone 在組合中，且清濁屬性與其他三個相反
   assert.ok(combo.tones.indexOf(combo.oddTone) !== -1, "組合 " + idx + " oddTone 在組合中");
@@ -55,7 +57,7 @@ quiz.SEIDAKU_COMBOS.forEach(function (combo, idx) {
 });
 
 // 緊湊度加權：相鄰緊湊的組合權重高於分散的組合
-// lt/sf/d/g（中央相連，1 清 3 濁）vs p/s/d/g（左上到右中分散，1 清 3 濁）
+// lt/sf/d/g（中央相連，1 清 3 濁）vs b/ltg/d/g（右上到左下分散，1 清 3 濁）
 function findCombo(tones) {
   var key = tones.slice().sort().join(",");
   for (var i = 0; i < quiz.SEIDAKU_COMBOS.length; i++) {
@@ -64,9 +66,9 @@ function findCombo(tones) {
   return null;
 }
 var compactCombo = findCombo(["lt", "sf", "d", "g"]);
-var spreadCombo = findCombo(["p", "s", "d", "g"]);
+var spreadCombo = findCombo(["b", "ltg", "d", "g"]);
 assert.ok(compactCombo, "緊湊組合 lt/sf/d/g 在題庫中");
-assert.ok(spreadCombo, "分散組合 p/s/d/g 在題庫中");
+assert.ok(spreadCombo, "分散組合 b/ltg/d/g 在題庫中");
 assert.ok(compactCombo.weight > spreadCombo.weight, "緊湊組合權重 > 分散組合權重");
 
 console.log("Task 2 tests passed");
@@ -80,6 +82,7 @@ function assertValidQuestion(q, label) {
   assert.strictEqual(q.choices.length, 4, label + "：4 個選項");
   assert.strictEqual(new Set(q.choices).size, 4, label + "：選項互異");
   assert.ok(q.choices.indexOf("v") === -1, label + "：不含 v");
+  assert.ok(q.choices.indexOf("s") === -1, label + "：不含 s");
   assert.ok(q.answerIndex >= 0 && q.answerIndex <= 3, label + "：answerIndex 0–3");
   // answerIndex 指向清濁屬性與其他三個不同的那一個
   var answerIsClear = quiz.isClearTone(q.choices[q.answerIndex]);
@@ -104,7 +107,7 @@ for (var qi = 0; qi < 500; qi++) {
 }
 
 // 加權抽樣統計：高權重（緊湊）組合整體出現頻率 > 低權重（分散）組合
-// 將 160 組依權重排序，比較前 1/3 與後 1/3 的總出現次數（統計上極穩定）
+// 將題庫依權重排序，比較前 1/3 與後 1/3 的總出現次數（統計上極穩定）
 (function () {
   var sorted = quiz.SEIDAKU_COMBOS.slice().sort(function (a, b) { return b.weight - a.weight; });
   var third = Math.floor(sorted.length / 3);
