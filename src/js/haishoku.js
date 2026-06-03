@@ -52,12 +52,7 @@
       row.appendChild(renderSwatch(notation, grow));
     });
     wrap.appendChild(row);
-
-    var label = document.createElement("p");
-    label.className = "scheme-example-label";
-    label.textContent = example.label;
-    wrap.appendChild(label);
-
+    // 不顯示顏色文字標籤；角色與配色性質由色塊（PCCS 記號）、版面比例與區塊標題傳達
     return wrap;
   }
 

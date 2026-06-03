@@ -94,21 +94,21 @@ var HAISHOKU_CATEGORIES = [
         description: "在色相環上角度差為 0°（即相同色相號碼）。給人統一、穩定但可能單調的感覺。",
         rule: { type: "hue-diff", min: 0, max: 0 },
         examples: [
-          { colors: ["v2", "p2"], label: "鮮豔紅＋淡紅" },
+          { colors: ["v18", "p18"], label: "鮮豔藍＋淡藍" },
           { colors: ["dp8", "ltg8"], label: "深黃＋淺灰黃" }
         ] },
       { title: "類似色相配色", titleEn: "Analogy Hue",
         description: "色相差在 1~3 的配色。因色相相近，易於調和且帶有些微變化。",
         rule: { type: "hue-diff", min: 1, max: 3 },
         examples: [
-          { colors: ["v2", "v4"], label: "紅＋紅橙" },
+          { colors: ["v10", "v12"], label: "黃綠＋綠" },
           { colors: ["sf12", "sf14"], label: "柔綠＋柔藍綠" }
         ] },
       { title: "對照色相配色", titleEn: "Contrast Hue",
         description: "色相差 8~10 的配色。具備明顯對比感，視覺效果強烈。",
         rule: { type: "hue-diff", min: 8, max: 10 },
         examples: [
-          { colors: ["v2", "v10"], label: "紅＋黃綠" },
+          { colors: ["v6", "v16"], label: "黃橙＋綠藍" },
           { colors: ["dp8", "dp18"], label: "深黃＋深藍" }
         ] },
       { title: "補色／互補色相配色", titleEn: "Complementary Hue",
@@ -130,21 +130,21 @@ var HAISHOKU_CATEGORIES = [
         description: "使用完全相同的色調（Tone）但不同色相。印象統一由該色調的特徵決定（例如全用 v 色調會極度華麗）。",
         rule: { type: "same-tone" },
         examples: [
-          { colors: ["v2", "v12"], label: "鮮豔紅＋鮮豔綠" },
+          { colors: ["v6", "v18"], label: "鮮豔橙＋鮮豔藍" },
           { colors: ["ltg8", "ltg20"], label: "淺灰黃＋淺灰紫" }
         ] },
       { title: "類似色調配色", titleEn: "Analogy Tone",
         description: "在色調圖上相鄰的色調配色（如 v 與 b，或 p 與 ltg）。印象和諧且帶有層次。",
         rule: { type: "different-tone-same-hue" },
         examples: [
-          { colors: ["v2", "b2"], label: "鮮豔紅＋明亮紅" },
+          { colors: ["v22", "b22"], label: "鮮豔紫＋明亮紫" },
           { colors: ["sf8", "d8"], label: "柔黃＋濁黃" }
         ] },
       { title: "對照色調配色", titleEn: "Contrast Tone",
         description: "在色調圖上距離較遠（明度或彩度差異大）的色調配色。",
         rule: { type: "contrast-tone" },
         examples: [
-          { colors: ["p2", "dkg2"], label: "淡紅＋暗灰紅" },
+          { colors: ["p20", "dkg20"], label: "淡藍紫＋暗灰藍紫" },
           { colors: ["v8", "ltg8"], label: "鮮黃＋淺灰黃" }
         ] }
     ]
@@ -159,7 +159,7 @@ var HAISHOKU_CATEGORIES = [
         description: "統一色相或統一色調，讓整體有一個明顯的「主角」。",
         rule: { type: "dominant" },
         examples: [
-          { colors: ["v2", "ltg2", "dp2"], label: "統一紅色相（Dominant Color）" },
+          { colors: ["v18", "ltg18", "dp18"], label: "統一藍色相（Dominant Color）" },
           { colors: ["v8", "v12", "v16"], label: "統一鮮豔色調（Dominant Tone）" }
         ] }
     ]
@@ -174,7 +174,7 @@ var HAISHOKU_CATEGORIES = [
         description: "色相依序變化。",
         rule: { type: "hue-gradation" },
         examples: [
-          { colors: ["v2", "v4", "v6", "v8"], label: "紅→紅橙→黃橙→黃" },
+          { colors: ["v6", "v8", "v10", "v12"], label: "黃橙→黃→黃綠→綠" },
           { colors: ["v14", "v16", "v18", "v20"], label: "藍綠→帶綠藍→藍→藍紫" }
         ] },
       { title: "明度漸層", titleEn: "Lightness Gradation",
@@ -188,7 +188,7 @@ var HAISHOKU_CATEGORIES = [
         description: "彩度由高到低或由低到高變化。",
         rule: { type: "saturation-gradation" },
         examples: [
-          { colors: ["v2", "b2", "sf2", "ltg2"], label: "鮮豔紅→明亮紅→柔紅→淺灰紅" },
+          { colors: ["v24", "b24", "sf24", "ltg24"], label: "鮮豔紅紫→明亮→柔→淺灰（彩度遞減）" },
           { colors: ["v18", "s18", "d18", "g18"], label: "鮮藍→強藍→鈍藍→灰藍" }
         ] },
       { title: "色調漸層", titleEn: "Tone Gradation",
@@ -210,7 +210,7 @@ var HAISHOKU_CATEGORIES = [
         description: "",
         rule: { type: "accent" },
         examples: [
-          { colors: ["N2", "N6", "v2"], label: "基調 N2／配合 N6／重點 v2（紅）" },
+          { colors: ["N2", "N6", "v12"], label: "基調 N2／配合 N6／重點 v12（綠）" },
           { colors: ["N9.5", "N5.5", "v18"], label: "基調 N9.5（白）／配合 N5.5／重點 v18（藍）" }
         ] },
       { title: "低明度配色＋高彩度重點色", titleEn: "",
@@ -218,13 +218,13 @@ var HAISHOKU_CATEGORIES = [
         rule: { type: "accent" },
         examples: [
           { colors: ["dkg16", "dk16", "v8"], label: "基調 dkg16／配合 dk16／重點 v8（黃）" },
-          { colors: ["dkg2", "dk2", "v14"], label: "基調 dkg2／配合 dk2／重點 v14（藍綠）" }
+          { colors: ["dkg20", "dk20", "v6"], label: "基調 dkg20／配合 dk20／重點 v6（橙黃）" }
         ] },
       { title: "低彩度明度差小的配色＋高彩度暖色系重點色", titleEn: "",
         description: "",
         rule: { type: "accent-warm" },
         examples: [
-          { colors: ["ltg8", "ltg10", "v2"], label: "基調 ltg8／配合 ltg10／重點 v2（紅）" },
+          { colors: ["ltg12", "ltg14", "v6"], label: "基調 ltg12／配合 ltg14／重點 v6（橙黃）" },
           { colors: ["ltg16", "ltg18", "v4"], label: "基調 ltg16／配合 ltg18／重點 v4（橙）" }
         ] }
     ]
@@ -239,7 +239,7 @@ var HAISHOKU_CATEGORIES = [
         description: "",
         rule: { type: "separation" },
         examples: [
-          { colors: ["v2", "N9.5", "v12"], label: "v2（紅）／N9.5（白）分離／v12（綠）" },
+          { colors: ["v18", "N9.5", "v6"], label: "v18（藍）／N9.5（白）分離／v6（橙）" },
           { colors: ["v8", "N1.5", "v20"], label: "v8（黃）／N1.5（黑）分離／v20（藍紫）" }
         ] },
       { title: "低彩度模糊配色＋低明度分離色", titleEn: "",
@@ -254,7 +254,7 @@ var HAISHOKU_CATEGORIES = [
         rule: { type: "separation" },
         examples: [
           { colors: ["dp16", "N9.5", "dp20"], label: "dp16（深藍）／N9.5（白）分離／dp20（深藍紫）" },
-          { colors: ["dk2", "N9.5", "dk6"], label: "dk2（暗紅）／N9.5（白）分離／dk6（暗黃橙）" }
+          { colors: ["dk10", "N9.5", "dk14"], label: "dk10（暗黃綠）／N9.5（白）分離／dk14（暗藍綠）" }
         ] }
     ]
   }
