@@ -12,24 +12,15 @@
     return;
   }
 
-  // 色塊上的文字用深色或白色（依背景亮度）
-  function textColorFor(hex) {
-    var rgb = hexToRgb(hex);
-    var luma = 0.299 * rgb.r + 0.587 * rgb.g + 0.114 * rgb.b;
-    return luma > 150 ? "#1a1a1a" : "#ffffff";
-  }
-
   // ---- 色卡渲染 ----
 
-  // 單一色塊（含記號標籤）
+  // 單一色塊（記號不放在色塊上，改於色塊下方註記）
   function renderSwatch(notation, flexGrow) {
     var hex = getSchemeColor(notation);
     var swatch = document.createElement("div");
     swatch.className = "scheme-swatch";
     swatch.style.backgroundColor = hex;
-    swatch.style.color = textColorFor(hex);
     swatch.style.flexGrow = flexGrow;
-    swatch.textContent = notation;
     return swatch;
   }
 
@@ -39,9 +30,16 @@
     var mark = document.createElement("div");
     mark.className = "accent-mark";
     mark.style.backgroundColor = hex;
-    mark.style.color = textColorFor(hex);
-    mark.textContent = notation;
     return mark;
+  }
+
+  // 色塊下方的記號註記，flex 比例與色塊列對齊
+  function renderNoteLabel(text, flexGrow) {
+    var label = document.createElement("div");
+    label.className = "scheme-note";
+    label.style.flexGrow = flexGrow;
+    label.textContent = text;
+    return label;
   }
 
   // 一個範例（色卡列）
@@ -56,6 +54,9 @@
     var row = document.createElement("div");
     row.className = "scheme-swatch-row layout-" + layout;
 
+    var noteRow = document.createElement("div");
+    noteRow.className = "scheme-note-row layout-" + layout;
+
     if (layout === "accent") {
       // [基調, 配合, 重點]：基調最寬、配合次之，重點色作小方形疊在基調色塊內
       var base = renderSwatch(example.colors[0], 5);
@@ -63,17 +64,22 @@
       base.appendChild(renderAccentMark(example.colors[2]));
       row.appendChild(base);
       row.appendChild(renderSwatch(example.colors[1], 3));
+      // 基調欄註記同時標出疊在其上的重點色（基調 ＋重點），配合欄標出配合色
+      noteRow.appendChild(renderNoteLabel(example.colors[0] + " ＋" + example.colors[2], 5));
+      noteRow.appendChild(renderNoteLabel(example.colors[1], 3));
     } else {
       // equal：全部等寬；separation：主色4:分離1:主色4
       var flexRatios = (layout === "separation") ? [4, 1, 4] : null;
       example.colors.forEach(function (notation, i) {
         var grow = flexRatios ? flexRatios[i] : 1;
         row.appendChild(renderSwatch(notation, grow));
+        noteRow.appendChild(renderNoteLabel(notation, grow));
       });
     }
 
     wrap.appendChild(row);
-    // 不顯示顏色文字標籤；角色與配色性質由色塊（PCCS 記號）、版面比例與區塊標題傳達
+    wrap.appendChild(noteRow);
+    // 顏色名稱不顯示；PCCS 記號於色塊下方註記，角色與配色性質由版面比例與區塊標題傳達
     return wrap;
   }
 
