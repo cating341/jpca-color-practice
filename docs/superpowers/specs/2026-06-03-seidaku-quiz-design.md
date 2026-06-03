@@ -83,7 +83,7 @@ tests/
 ```js
 // 清濁分類
 function isClearTone(toneId)      // b/lt/p/dp/dk/dkg → true；s/sf/d/ltg/g → false；v → throw
-function seidakuLabel(toneId)     // "清色（明清色）" | "清色（暗清色）" | "濁色"
+function seidakuLabel(toneId)     // "清色（明清色）" | "清色（暗清色）" | "濁色（中間色）"
 
 // 題庫（載入時計算）
 var SEIDAKU_COMBOS = [ { tones: ["lt","sf","d","g"], oddTone: "lt", weight: ... }, ... ]

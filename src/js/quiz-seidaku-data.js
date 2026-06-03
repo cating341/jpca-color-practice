@@ -84,12 +84,48 @@ var SEIDAKU_COMBOS = (function () {
   return combos;
 })();
 
+// ---- 出題 ----
+
+// 產生一題：加權抽組合 × 隨機色相（1–24）× 隨機排列
+// rng：回傳 [0,1) 的隨機函式（預設 Math.random；測試可注入固定函式以重現結果）
+// 回傳：{ hueNum, choices: [toneId×4], answerIndex }
+function generateQuestion(rng) {
+  rng = rng || Math.random;
+
+  // 加權抽樣：權重越高的組合越常被抽中
+  var totalWeight = 0;
+  SEIDAKU_COMBOS.forEach(function (c) { totalWeight += c.weight; });
+  var r = rng() * totalWeight;
+  var combo = SEIDAKU_COMBOS[SEIDAKU_COMBOS.length - 1]; // 浮點誤差時的保底
+  for (var i = 0; i < SEIDAKU_COMBOS.length; i++) {
+    r -= SEIDAKU_COMBOS[i].weight;
+    if (r <= 0) { combo = SEIDAKU_COMBOS[i]; break; }
+  }
+
+  // 隨機色相 1–24
+  var hueNum = Math.min(Math.floor(rng() * 24) + 1, 24);
+
+  // Fisher–Yates 隨機排列
+  var choices = combo.tones.slice();
+  for (var j = choices.length - 1; j > 0; j--) {
+    var k = Math.floor(rng() * (j + 1));
+    var tmp = choices[j]; choices[j] = choices[k]; choices[k] = tmp;
+  }
+
+  return {
+    hueNum: hueNum,
+    choices: choices,
+    answerIndex: choices.indexOf(combo.oddTone)
+  };
+}
+
 // ---- Node 匯出（測試用；瀏覽器中此區塊不執行） ----
 if (typeof module !== "undefined" && module.exports) {
   module.exports = {
     isClearTone: isClearTone,
     seidakuLabel: seidakuLabel,
     SEIDAKU_TONES: SEIDAKU_TONES,
-    SEIDAKU_COMBOS: SEIDAKU_COMBOS
+    SEIDAKU_COMBOS: SEIDAKU_COMBOS,
+    generateQuestion: generateQuestion
   };
 }

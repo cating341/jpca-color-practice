@@ -70,3 +70,56 @@ assert.ok(spreadCombo, "分散組合 p/s/d/g 在題庫中");
 assert.ok(compactCombo.weight > spreadCombo.weight, "緊湊組合權重 > 分散組合權重");
 
 console.log("Task 2 tests passed");
+
+// ---- 出題 ----
+
+// 驗證一題的合法性（共用檢查函式）
+function assertValidQuestion(q, label) {
+  assert.ok(q.hueNum >= 1 && q.hueNum <= 24, label + "：色相 1–24");
+  assert.strictEqual(Math.floor(q.hueNum), q.hueNum, label + "：色相為整數");
+  assert.strictEqual(q.choices.length, 4, label + "：4 個選項");
+  assert.strictEqual(new Set(q.choices).size, 4, label + "：選項互異");
+  assert.ok(q.choices.indexOf("v") === -1, label + "：不含 v");
+  assert.ok(q.answerIndex >= 0 && q.answerIndex <= 3, label + "：answerIndex 0–3");
+  // answerIndex 指向清濁屬性與其他三個不同的那一個
+  var answerIsClear = quiz.isClearTone(q.choices[q.answerIndex]);
+  q.choices.forEach(function (t, i) {
+    if (i === q.answerIndex) return;
+    assert.strictEqual(quiz.isClearTone(t), !answerIsClear, label + "：其他選項清濁與答案相反");
+  });
+}
+
+// 固定 rng → 結果合法且可重現（同樣的 rng 序列產生同樣的題目）
+var qa = quiz.generateQuestion(function () { return 0; });
+var qb = quiz.generateQuestion(function () { return 0; });
+assertValidQuestion(qa, "固定 rng=0");
+assert.deepStrictEqual(qa, qb, "同樣 rng 產生同樣題目");
+
+var qc = quiz.generateQuestion(function () { return 0.999999; });
+assertValidQuestion(qc, "固定 rng≈1");
+
+// 預設 rng（Math.random）：大量出題每題都合法
+for (var qi = 0; qi < 500; qi++) {
+  assertValidQuestion(quiz.generateQuestion(), "隨機第 " + qi + " 題");
+}
+
+// 加權抽樣統計：高權重（緊湊）組合整體出現頻率 > 低權重（分散）組合
+// 將 160 組依權重排序，比較前 1/3 與後 1/3 的總出現次數（統計上極穩定）
+(function () {
+  var sorted = quiz.SEIDAKU_COMBOS.slice().sort(function (a, b) { return b.weight - a.weight; });
+  var third = Math.floor(sorted.length / 3);
+  var topKeys = new Set(sorted.slice(0, third).map(function (c) { return c.tones.slice().sort().join(","); }));
+  var bottomKeys = new Set(sorted.slice(-third).map(function (c) { return c.tones.slice().sort().join(","); }));
+
+  var topCount = 0, bottomCount = 0;
+  for (var i = 0; i < 6000; i++) {
+    var q = quiz.generateQuestion();
+    var key = q.choices.slice().sort().join(",");
+    if (topKeys.has(key)) topCount++;
+    if (bottomKeys.has(key)) bottomCount++;
+  }
+  assert.ok(topCount > bottomCount,
+    "緊湊組合出現次數（" + topCount + "）應多於分散組合（" + bottomCount + "）");
+})();
+
+console.log("Task 3 tests passed");
