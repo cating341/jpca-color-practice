@@ -84,6 +84,13 @@ var SEIDAKU_COMBOS = (function () {
   return combos;
 })();
 
+// 題庫總權重（載入時計算一次，供加權抽樣使用）
+var SEIDAKU_TOTAL_WEIGHT = (function () {
+  var total = 0;
+  SEIDAKU_COMBOS.forEach(function (c) { total += c.weight; });
+  return total;
+})();
+
 // ---- 出題 ----
 
 // 產生一題：加權抽組合 × 隨機色相（1–24）× 隨機排列
@@ -93,9 +100,7 @@ function generateQuestion(rng) {
   rng = rng || Math.random;
 
   // 加權抽樣：權重越高的組合越常被抽中
-  var totalWeight = 0;
-  SEIDAKU_COMBOS.forEach(function (c) { totalWeight += c.weight; });
-  var r = rng() * totalWeight;
+  var r = rng() * SEIDAKU_TOTAL_WEIGHT;
   var combo = SEIDAKU_COMBOS[SEIDAKU_COMBOS.length - 1]; // 浮點誤差時的保底
   for (var i = 0; i < SEIDAKU_COMBOS.length; i++) {
     r -= SEIDAKU_COMBOS[i].weight;
