@@ -24,12 +24,20 @@ assert.deepStrictEqual(haishoku.parseColorNotation("W"),
     /parseColorNotation/, "非法記號拋錯: " + JSON.stringify(bad));
 });
 
+// 無彩色明度值超出 PCCS 範圍 [1.5, 9.5] 視為非法記號
+["N0", "N1", "N10", "N12"].forEach(function (bad) {
+  assert.throws(function () { haishoku.parseColorNotation(bad); },
+    /parseColorNotation/, "無彩色明度超範圍拋錯: " + JSON.stringify(bad));
+});
+
 // ---- 無彩色灰階插值 ----
 assert.strictEqual(haishoku.getNeutralColor(9.5), "#f5f5f5", "N9.5 = 白");
 assert.strictEqual(haishoku.getNeutralColor(1.5), "#262626", "N1.5 = 黑");
 assert.strictEqual(haishoku.getNeutralColor(5.5), "#8c8c8c", "N5.5 命中既有灰階");
 // 插值：N2 介於 2.5 (#404040) 與 1.5 (#262626) 中點
 assert.strictEqual(haishoku.getNeutralColor(2), "#333333", "N2 = 2.5/1.5 中點");
+// 插值：N7 介於 7.5 (#bfbfbf) 與 6.5 (#a6a6a6) 中點
+assert.strictEqual(haishoku.getNeutralColor(7), "#b3b3b3", "N7 = 7.5/6.5 中點");
 // clamp
 assert.strictEqual(haishoku.getNeutralColor(0), "#262626", "N0 clamp 到 1.5");
 assert.strictEqual(haishoku.getNeutralColor(10), "#f5f5f5", "N10 clamp 到 9.5");

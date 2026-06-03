@@ -20,7 +20,11 @@ function parseColorNotation(notation) {
 
   var neutralMatch = notation.match(/^N(\d+(?:\.\d+)?)$/);
   if (neutralMatch) {
-    return { type: "neutral", value: parseFloat(neutralMatch[1]) };
+    var nval = parseFloat(neutralMatch[1]);
+    if (nval < 1.5 || nval > 9.5) {
+      throw new Error("parseColorNotation: neutral value out of range in " + notation);
+    }
+    return { type: "neutral", value: nval };
   }
 
   var chromaticMatch = notation.match(/^([a-z]+)(\d+)$/);
