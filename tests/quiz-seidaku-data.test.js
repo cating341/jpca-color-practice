@@ -24,6 +24,7 @@ assert.strictEqual(quiz.seidakuLabel("dk"), "清色（暗清色）", "dk 標籤"
 assert.strictEqual(quiz.seidakuLabel("dkg"), "清色（暗清色）", "dkg 標籤");
 assert.strictEqual(quiz.seidakuLabel("g"), "濁色（中間色）", "g 標籤");
 assert.throws(function () { quiz.seidakuLabel("v"); }, /純色/, "v 標籤拋出錯誤");
+assert.throws(function () { quiz.seidakuLabel("xx"); }, /unknown/, "未知色調標籤拋出錯誤");
 
 // 測驗使用的色調：11 個、不含 v
 assert.strictEqual(quiz.SEIDAKU_TONES.length, 11, "11 個測驗色調");

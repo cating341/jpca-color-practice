@@ -4,7 +4,7 @@
 // 取得 PCCS 資料（Node：require；瀏覽器：pccs-data.js 已定義全域變數）
 var _pccs = (typeof module !== "undefined" && module.exports)
   ? require("./pccs-data.js")
-  : { PCCS_TONES: PCCS_TONES, findTone: findTone, getColor: getColor };
+  : { PCCS_TONES: PCCS_TONES, findTone: findTone };
 
 // ---- 清濁分類 ----
 // 清色 = 明清色（純色＋白）＋ 暗清色（純色＋黑）；濁色 = 中間色（純色＋灰）
