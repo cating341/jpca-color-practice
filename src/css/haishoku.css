@@ -39,14 +39,11 @@
 
 .scheme-swatch-row {
   display: flex;
-  gap: 4px;
+  gap: 0;
   height: 90px;
   border-radius: 8px;
   overflow: hidden;
 }
-
-/* 分離配色：色塊間不留縫，分離效果由分離色本身呈現 */
-.scheme-swatch-row.layout-separation { gap: 0; }
 
 .scheme-swatch {
   flex-basis: 0;
