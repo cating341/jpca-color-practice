@@ -3,7 +3,9 @@
   "use strict";
 
   // 防禦：資料載入檢查
-  if (typeof generateQuestion === "undefined" || typeof getColor === "undefined") {
+  if (typeof generateQuestion === "undefined" || typeof getColor === "undefined" ||
+      typeof findTone === "undefined" || typeof isClearTone === "undefined" ||
+      typeof seidakuLabel === "undefined") {
     document.body.insertAdjacentHTML(
       "afterbegin",
       '<p style="color:#c00;padding:1rem;">資料載入失敗：請確認 pccs-data.js 與 quiz-seidaku-data.js 已正確載入。</p>'
