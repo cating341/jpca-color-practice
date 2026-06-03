@@ -141,6 +141,19 @@ haishoku.HAISHOKU_CATEGORIES.forEach(function (cat) {
         assert.strictEqual(new Set(hues).size, 1, label + "：色相相同");
       }
 
+      if (rule.type === "contrast-tone") {
+        assert.strictEqual(new Set(tones).size, chrom.length, label + "：色調互異");
+        assert.strictEqual(new Set(hues).size, 1, label + "：色相相同");
+        // 對照色調：兩色調在色調圖上距離大（明度或彩度差異明顯）
+        for (var ci = 0; ci < tones.length; ci++) {
+          for (var cj = ci + 1; cj < tones.length; cj++) {
+            var sa = pccs.findTone(tones[ci]).spotPos, sb = pccs.findTone(tones[cj]).spotPos;
+            var dist = Math.sqrt(Math.pow(sa.x - sb.x, 2) + Math.pow(sa.y - sb.y, 2));
+            assert.ok(dist >= 200, label + "：色調距離 " + Math.round(dist) + " 應 ≥ 200（對照）");
+          }
+        }
+      }
+
       if (rule.type === "dominant") {
         // 統一色相或統一色調（其一即可）
         assert.ok(new Set(tones).size === 1 || new Set(hues).size === 1,

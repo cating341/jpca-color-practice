@@ -142,7 +142,7 @@ var HAISHOKU_CATEGORIES = [
         ] },
       { title: "對照色調配色", titleEn: "Contrast Tone",
         description: "在色調圖上距離較遠（明度或彩度差異大）的色調配色。",
-        rule: { type: "different-tone-same-hue" },
+        rule: { type: "contrast-tone" },
         examples: [
           { colors: ["p2", "dkg2"], label: "淡紅＋暗灰紅" },
           { colors: ["v8", "ltg8"], label: "鮮黃＋淺灰黃" }
@@ -182,7 +182,7 @@ var HAISHOKU_CATEGORIES = [
         rule: { type: "lightness-gradation" },
         examples: [
           { colors: ["p8", "lt8", "b8", "dp8"], label: "由淺黃到深黃" },
-          { colors: ["lt16", "sf16", "d16", "dk16"], label: "由淺藍到暗藍（同彩度欄）" }
+          { colors: ["lt16", "sf16", "d16", "dk16"], label: "由淺藍到暗藍（明度遞減）" }
         ] },
       { title: "彩度漸層", titleEn: "Saturation Gradation",
         description: "彩度由高到低或由低到高變化。",
