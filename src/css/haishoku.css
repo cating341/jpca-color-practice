@@ -79,6 +79,13 @@
   white-space: nowrap;
 }
 
+/* 重點配色註記：角色標籤（基調／配合／重點）以非等寬、較淡呈現 */
+.scheme-note-part { white-space: nowrap; }
+.scheme-note-role {
+  font-family: "Microsoft JhengHei", "PingFang TC", system-ui, sans-serif;
+  color: #999;
+}
+
 /* ---- 窄螢幕：範例上下排列 ---- */
 @media (max-width: 700px) {
   .scheme-examples { grid-template-columns: 1fr; }

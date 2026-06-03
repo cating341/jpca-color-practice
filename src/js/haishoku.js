@@ -33,13 +33,31 @@
     return mark;
   }
 
-  // 色塊下方的記號註記，flex 比例與色塊列對齊
-  function renderNoteLabel(text, flexGrow) {
+  // 色塊下方的註記格（flex 比例與色塊列對齊）
+  function makeNoteCell(flexGrow) {
     var label = document.createElement("div");
     label.className = "scheme-note";
     label.style.flexGrow = flexGrow;
+    return label;
+  }
+
+  // 純記號註記（等寬／分離配色用）
+  function renderNoteLabel(text, flexGrow) {
+    var label = makeNoteCell(flexGrow);
     label.textContent = text;
     return label;
+  }
+
+  // 角色＋記號（重點配色用，標出基調／配合／重點）
+  function renderRolePart(role, notation) {
+    var part = document.createElement("span");
+    part.className = "scheme-note-part";
+    var roleEl = document.createElement("span");
+    roleEl.className = "scheme-note-role";
+    roleEl.textContent = role;
+    part.appendChild(roleEl);
+    part.appendChild(document.createTextNode(notation));
+    return part;
   }
 
   // 一個範例（色卡列）
@@ -64,9 +82,15 @@
       base.appendChild(renderAccentMark(example.colors[2]));
       row.appendChild(base);
       row.appendChild(renderSwatch(example.colors[1], 3));
-      // 基調欄註記同時標出疊在其上的重點色（基調 ＋重點），配合欄標出配合色
-      noteRow.appendChild(renderNoteLabel(example.colors[0] + " ＋" + example.colors[2], 5));
-      noteRow.appendChild(renderNoteLabel(example.colors[1], 3));
+      // 基調欄同時標出疊在其上的重點色（基調 ＋ 重點），配合欄標出配合色；皆標角色說明
+      var baseNote = makeNoteCell(5);
+      baseNote.appendChild(renderRolePart("基調 ", example.colors[0]));
+      baseNote.appendChild(document.createTextNode(" ＋ "));
+      baseNote.appendChild(renderRolePart("重點 ", example.colors[2]));
+      noteRow.appendChild(baseNote);
+      var assortNote = makeNoteCell(3);
+      assortNote.appendChild(renderRolePart("配合 ", example.colors[1]));
+      noteRow.appendChild(assortNote);
     } else {
       // equal：全部等寬；separation：主色4:分離1:主色4
       var flexRatios = (layout === "separation") ? [4, 1, 4] : null;
