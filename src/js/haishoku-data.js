@@ -185,7 +185,7 @@ var HAISHOKU_CATEGORIES = [
           { colors: ["lt16", "sf16", "d16", "dk16"], label: "由淺藍到暗藍（明度遞減）" }
         ] },
       { title: "彩度漸層", titleEn: "Saturation Gradation",
-        description: "彩度由高到低或由低到高變化。清濁屬性容易受彩度影響：彩度高者偏清色（鮮明清澈），彩度低者因含灰較多而偏濁色。",
+        description: "彩度由高到低或由低到高變化。注意：彩度高低不等於清濁——清濁取決於混入的是白／黑（清色）或灰（濁色），而非彩度。例如 p（淡）與 ltg（淺灰）彩度相近，p 卻是清色、ltg 是濁色。",
         rule: { type: "saturation-gradation" },
         examples: [
           { colors: ["v24", "b24", "sf24", "ltg24"], label: "鮮豔紅紫→明亮→柔→淺灰（彩度遞減）" },
