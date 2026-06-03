@@ -31,3 +31,42 @@ assert.strictEqual(quiz.SEIDAKU_TONES.length, 11, "11 個測驗色調");
 assert.ok(quiz.SEIDAKU_TONES.indexOf("v") === -1, "不含 v");
 
 console.log("Task 1 tests passed");
+
+// ---- 題庫枚舉 ----
+// 1 清 + 3 濁：C(6,1)×C(5,3) = 60；1 濁 + 3 清：C(5,1)×C(6,3) = 100；共 160
+assert.strictEqual(quiz.SEIDAKU_COMBOS.length, 160, "題庫共 160 組");
+
+quiz.SEIDAKU_COMBOS.forEach(function (combo, idx) {
+  // 每組剛好 4 個互異色調、不含 v
+  assert.strictEqual(combo.tones.length, 4, "組合 " + idx + " 有 4 個色調");
+  assert.strictEqual(new Set(combo.tones).size, 4, "組合 " + idx + " 色調互異");
+  assert.ok(combo.tones.indexOf("v") === -1, "組合 " + idx + " 不含 v");
+
+  // oddTone 在組合中，且清濁屬性與其他三個相反
+  assert.ok(combo.tones.indexOf(combo.oddTone) !== -1, "組合 " + idx + " oddTone 在組合中");
+  var oddIsClear = quiz.isClearTone(combo.oddTone);
+  combo.tones.forEach(function (t) {
+    if (t === combo.oddTone) return;
+    assert.strictEqual(quiz.isClearTone(t), !oddIsClear, "組合 " + idx + " 其他色調清濁與 oddTone 相反");
+  });
+
+  // 權重為正數
+  assert.ok(combo.weight > 0, "組合 " + idx + " 權重 > 0");
+});
+
+// 緊湊度加權：相鄰緊湊的組合權重高於分散的組合
+// lt/sf/d/g（中央相連，1 清 3 濁）vs p/s/d/g（左上到右中分散，1 清 3 濁）
+function findCombo(tones) {
+  var key = tones.slice().sort().join(",");
+  for (var i = 0; i < quiz.SEIDAKU_COMBOS.length; i++) {
+    if (quiz.SEIDAKU_COMBOS[i].tones.slice().sort().join(",") === key) return quiz.SEIDAKU_COMBOS[i];
+  }
+  return null;
+}
+var compactCombo = findCombo(["lt", "sf", "d", "g"]);
+var spreadCombo = findCombo(["p", "s", "d", "g"]);
+assert.ok(compactCombo, "緊湊組合 lt/sf/d/g 在題庫中");
+assert.ok(spreadCombo, "分散組合 p/s/d/g 在題庫中");
+assert.ok(compactCombo.weight > spreadCombo.weight, "緊湊組合權重 > 分散組合權重");
+
+console.log("Task 2 tests passed");

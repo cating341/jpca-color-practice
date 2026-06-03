@@ -31,11 +31,65 @@ var SEIDAKU_TONES = _pccs.PCCS_TONES
   .filter(function (t) { return t.category !== "純色"; })
   .map(function (t) { return t.id; });
 
+// ---- 題庫枚舉 ----
+
+// 色調表格座標（欄 = 彩度低→高，列 = 明度高→低）— 緊湊度計算用
+// 對應 PCCS 色調圖位置；b/s/dp 欄實際有半格偏移，鬆散相鄰不需精確，忽略
+var SEIDAKU_TONE_GRID = {
+  p:   { col: 0, row: 0 }, lt: { col: 1, row: 0 }, b:  { col: 2, row: 0 },
+  ltg: { col: 0, row: 1 }, sf: { col: 1, row: 1 }, s:  { col: 2, row: 1 },
+  g:   { col: 0, row: 2 }, d:  { col: 1, row: 2 }, dp: { col: 2, row: 2 },
+  dkg: { col: 0, row: 3 }, dk: { col: 1, row: 3 }
+};
+
+// 題庫：所有「3 個同清濁 + 1 個不同」的 4 色調組合，附緊湊度權重
+var SEIDAKU_COMBOS = (function () {
+  var clearTones = SEIDAKU_TONES.filter(isClearTone);
+  var muddyTones = SEIDAKU_TONES.filter(function (t) { return !isClearTone(t); });
+
+  // 從 arr 中取 k 個的所有組合
+  function choose(arr, k) {
+    if (k === 0) return [[]];
+    if (arr.length < k) return [];
+    var withFirst = choose(arr.slice(1), k - 1).map(function (c) { return [arr[0]].concat(c); });
+    return withFirst.concat(choose(arr.slice(1), k));
+  }
+
+  // 分散度 = 四色調在表格座標上的兩兩歐氏距離總和
+  function spread(tones) {
+    var sum = 0;
+    for (var i = 0; i < tones.length; i++) {
+      for (var j = i + 1; j < tones.length; j++) {
+        var a = SEIDAKU_TONE_GRID[tones[i]], b = SEIDAKU_TONE_GRID[tones[j]];
+        sum += Math.sqrt(Math.pow(a.col - b.col, 2) + Math.pow(a.row - b.row, 2));
+      }
+    }
+    return sum;
+  }
+
+  // oddGroup 每個色調 × mainGroup 取 3 個的每種組合
+  var combos = [];
+  function addCombos(oddGroup, mainGroup) {
+    oddGroup.forEach(function (odd) {
+      choose(mainGroup, 3).forEach(function (three) {
+        var tones = [odd].concat(three);
+        // 權重與分散度平方成反比 → 緊湊組合最常被抽中
+        combos.push({ tones: tones, oddTone: odd, weight: 1 / Math.pow(spread(tones), 2) });
+      });
+    });
+  }
+
+  addCombos(clearTones, muddyTones); // 1 清 + 3 濁
+  addCombos(muddyTones, clearTones); // 1 濁 + 3 清
+  return combos;
+})();
+
 // ---- Node 匯出（測試用；瀏覽器中此區塊不執行） ----
 if (typeof module !== "undefined" && module.exports) {
   module.exports = {
     isClearTone: isClearTone,
     seidakuLabel: seidakuLabel,
-    SEIDAKU_TONES: SEIDAKU_TONES
+    SEIDAKU_TONES: SEIDAKU_TONES,
+    SEIDAKU_COMBOS: SEIDAKU_COMBOS
   };
 }
