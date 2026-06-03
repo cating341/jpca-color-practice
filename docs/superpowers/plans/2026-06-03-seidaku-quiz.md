@@ -69,6 +69,7 @@ assert.strictEqual(quiz.seidakuLabel("dk"), "清色（暗清色）", "dk 標籤"
 assert.strictEqual(quiz.seidakuLabel("dkg"), "清色（暗清色）", "dkg 標籤");
 assert.strictEqual(quiz.seidakuLabel("g"), "濁色（中間色）", "g 標籤");
 assert.throws(function () { quiz.seidakuLabel("v"); }, /純色/, "v 標籤拋出錯誤");
+assert.throws(function () { quiz.seidakuLabel("xx"); }, /unknown/, "未知色調標籤拋出錯誤");
 
 // 測驗使用的色調：11 個、不含 v
 assert.strictEqual(quiz.SEIDAKU_TONES.length, 11, "11 個測驗色調");
@@ -93,7 +94,7 @@ Expected: FAIL — `Cannot find module '.../src/js/quiz-seidaku-data.js'`
 // 取得 PCCS 資料（Node：require；瀏覽器：pccs-data.js 已定義全域變數）
 var _pccs = (typeof module !== "undefined" && module.exports)
   ? require("./pccs-data.js")
-  : { PCCS_TONES: PCCS_TONES, findTone: findTone, getColor: getColor };
+  : { PCCS_TONES: PCCS_TONES, findTone: findTone };
 
 // ---- 清濁分類 ----
 // 清色 = 明清色（純色＋白）＋ 暗清色（純色＋黑）；濁色 = 中間色（純色＋灰）
