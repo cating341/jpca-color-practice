@@ -22,7 +22,7 @@ header, main {
 
 h1 { color: var(--accent); }
 
-.topic-nav { margin-top: 1.5rem; }
+.topic-nav { margin-top: 1.5rem; display: grid; gap: 1rem; }
 
 .topic-card {
   display: block;
