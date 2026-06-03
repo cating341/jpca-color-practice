@@ -75,11 +75,198 @@ function getSchemeColor(notation) {
   return _pccs.getColor(parsed.toneId, parsed.hueNum);
 }
 
+// ---- 配色法內容資料 ----
+// 內容依據 ref/u5-color-schemes.json（M1-U5 配色基礎）；
+// 各小節補足至 2 個範例（補足範例見 docs/superpowers/specs/2026-06-03-haishoku-design.md）
+// rule：領域規則（測試用，驗證範例符合該配色法定義）
+// layout：equal（等寬色塊）｜accent（基調/配合/重點 面積比例）｜separation（主色｜分離帶｜主色）
+
+var HAISHOKU_OVERVIEW = "配色是指兩個以上的色彩組合。好的配色能傳達特定的情感和印象。在此單元中，我們將學習基於 PCCS 色相與色調系統的基礎配色法則。";
+
+var HAISHOKU_CATEGORIES = [
+  {
+    id: "hue-schemes",
+    title: "色相配色",
+    description: "以色相環上的相對位置為基準的配色法。色相環上的距離決定配色性質：相鄰 1–3 號為類似、相隔 8–10 號為對照、正對面（11–12 號）則為補色。",
+    layout: "equal",
+    schemes: [
+      { title: "同一色相配色", titleEn: "Identity Hue",
+        description: "在色相環上角度差為 0°（即相同色相號碼）。給人統一、穩定但可能單調的感覺。",
+        rule: { type: "hue-diff", min: 0, max: 0 },
+        examples: [
+          { colors: ["v2", "p2"], label: "鮮豔紅＋淡紅" },
+          { colors: ["dp8", "ltg8"], label: "深黃＋淺灰黃" }
+        ] },
+      { title: "類似色相配色", titleEn: "Analogy Hue",
+        description: "色相差在 1~3 的配色。因色相相近，易於調和且帶有些微變化。",
+        rule: { type: "hue-diff", min: 1, max: 3 },
+        examples: [
+          { colors: ["v2", "v4"], label: "紅＋紅橙" },
+          { colors: ["sf12", "sf14"], label: "柔綠＋柔藍綠" }
+        ] },
+      { title: "對照色相配色", titleEn: "Contrast Hue",
+        description: "色相差 8~10 的配色。具備明顯對比感，視覺效果強烈。",
+        rule: { type: "hue-diff", min: 8, max: 10 },
+        examples: [
+          { colors: ["v2", "v10"], label: "紅＋黃綠" },
+          { colors: ["dp8", "dp18"], label: "深黃＋深藍" }
+        ] },
+      { title: "補色／互補色相配色", titleEn: "Complementary Hue",
+        description: "色相差 11~12 的配色，即色相環正對面的顏色。對比最為強烈、刺激。",
+        rule: { type: "hue-diff", min: 11, max: 12 },
+        examples: [
+          { colors: ["v2", "v14"], label: "紅＋藍綠" },
+          { colors: ["b8", "b20"], label: "明亮黃＋明亮藍紫" }
+        ] }
+    ]
+  },
+  {
+    id: "tone-schemes",
+    title: "色調配色",
+    description: "以 PCCS 色調（Tone）為基準的配色法。",
+    layout: "equal",
+    schemes: [
+      { title: "同一色調配色", titleEn: "Identity Tone",
+        description: "使用完全相同的色調（Tone）但不同色相。印象統一由該色調的特徵決定（例如全用 v 色調會極度華麗）。",
+        rule: { type: "same-tone" },
+        examples: [
+          { colors: ["v2", "v12"], label: "鮮豔紅＋鮮豔綠" },
+          { colors: ["ltg8", "ltg20"], label: "淺灰黃＋淺灰紫" }
+        ] },
+      { title: "類似色調配色", titleEn: "Analogy Tone",
+        description: "在色調圖上相鄰的色調配色（如 v 與 b，或 p 與 ltg）。印象和諧且帶有層次。",
+        rule: { type: "different-tone-same-hue" },
+        examples: [
+          { colors: ["v2", "b2"], label: "鮮豔紅＋明亮紅" },
+          { colors: ["sf8", "d8"], label: "柔黃＋濁黃" }
+        ] },
+      { title: "對照色調配色", titleEn: "Contrast Tone",
+        description: "在色調圖上距離較遠（明度或彩度差異大）的色調配色。",
+        rule: { type: "different-tone-same-hue" },
+        examples: [
+          { colors: ["p2", "dkg2"], label: "淡紅＋暗灰紅" },
+          { colors: ["v8", "ltg8"], label: "鮮黃＋淺灰黃" }
+        ] }
+    ]
+  },
+  {
+    id: "dominant-schemes",
+    title: "主調配色",
+    description: "畫面中由某一特定色彩屬性佔據主導地位，產生強烈的整體統一感。M1 介紹基本概念，M2 會有更綜合的服裝應用。",
+    layout: "equal",
+    schemes: [
+      { title: "主調顏色／主調色調", titleEn: "Dominant Color / Dominant Tone",
+        description: "統一色相或統一色調，讓整體有一個明顯的「主角」。",
+        rule: { type: "dominant" },
+        examples: [
+          { colors: ["v2", "ltg2", "dp2"], label: "統一紅色相（Dominant Color）" },
+          { colors: ["v8", "v12", "v16"], label: "統一鮮豔色調（Dominant Tone）" }
+        ] }
+    ]
+  },
+  {
+    id: "gradation",
+    title: "漸層配色（Gradation／グラデーション）",
+    description: "顏色按照一定的規律作階梯式的變化。",
+    layout: "equal",
+    schemes: [
+      { title: "色相漸層", titleEn: "Hue Gradation",
+        description: "色相依序變化。",
+        rule: { type: "hue-gradation" },
+        examples: [
+          { colors: ["v2", "v4", "v6", "v8"], label: "紅→紅橙→黃橙→黃" },
+          { colors: ["v14", "v16", "v18", "v20"], label: "藍綠→帶綠藍→藍→藍紫" }
+        ] },
+      { title: "明度漸層", titleEn: "Lightness Gradation",
+        description: "明度由亮到暗或由暗到亮變化。",
+        rule: { type: "lightness-gradation" },
+        examples: [
+          { colors: ["p8", "lt8", "b8", "dp8"], label: "由淺黃到深黃" },
+          { colors: ["lt16", "sf16", "d16", "dk16"], label: "由淺藍到暗藍（同彩度欄）" }
+        ] },
+      { title: "彩度漸層", titleEn: "Saturation Gradation",
+        description: "彩度由高到低或由低到高變化。",
+        rule: { type: "saturation-gradation" },
+        examples: [
+          { colors: ["v2", "b2", "sf2", "ltg2"], label: "鮮豔紅→明亮紅→柔紅→淺灰紅" },
+          { colors: ["v18", "s18", "d18", "g18"], label: "鮮藍→強藍→鈍藍→灰藍" }
+        ] },
+      { title: "色調漸層", titleEn: "Tone Gradation",
+        description: "色調圖上有規律的移動（如淡→淺→明亮→鮮豔）。",
+        rule: { type: "tone-gradation" },
+        examples: [
+          { colors: ["p16", "lt16", "b16", "v16"], label: "藍色調漸層（淡→淺→明亮→鮮豔）" },
+          { colors: ["v4", "dp4", "dk4", "dkg4"], label: "橙色調漸層（鮮豔→深→暗→暗灰）" }
+        ] }
+    ]
+  },
+  {
+    id: "accent",
+    title: "重點配色（Accent／アクセントカラー）",
+    description: "在單調或大面積的統一配色中，加入小面積的強烈對比色，達到畫龍點睛的效果。面積最大的稱為基調色（Base color），次要的稱為配合色（Assorted color），面積最小的為重點色（Accent color）。",
+    layout: "accent",
+    schemes: [
+      { title: "無彩色＋高彩度重點色", titleEn: "",
+        description: "",
+        rule: { type: "accent" },
+        examples: [
+          { colors: ["N2", "N6", "v2"], label: "基調 N2／配合 N6／重點 v2（紅）" },
+          { colors: ["N9.5", "N5.5", "v18"], label: "基調 N9.5（白）／配合 N5.5／重點 v18（藍）" }
+        ] },
+      { title: "低明度配色＋高彩度重點色", titleEn: "",
+        description: "",
+        rule: { type: "accent" },
+        examples: [
+          { colors: ["dkg16", "dk16", "v8"], label: "基調 dkg16／配合 dk16／重點 v8（黃）" },
+          { colors: ["dkg2", "dk2", "v14"], label: "基調 dkg2／配合 dk2／重點 v14（藍綠）" }
+        ] },
+      { title: "低彩度明度差小的配色＋高彩度暖色系重點色", titleEn: "",
+        description: "",
+        rule: { type: "accent-warm" },
+        examples: [
+          { colors: ["ltg8", "ltg10", "v2"], label: "基調 ltg8／配合 ltg10／重點 v2（紅）" },
+          { colors: ["ltg16", "ltg18", "v4"], label: "基調 ltg16／配合 ltg18／重點 v4（橙）" }
+        ] }
+    ]
+  },
+  {
+    id: "separation",
+    title: "分離配色（Separation／セパレーション）",
+    description: "在兩種對比過強或過於模糊的顏色之間，加入無彩色或低彩度顏色作分隔，使整體和諧或輪廓清晰。",
+    layout: "separation",
+    schemes: [
+      { title: "高彩度強烈配色＋無彩色分離色", titleEn: "",
+        description: "",
+        rule: { type: "separation" },
+        examples: [
+          { colors: ["v2", "N9.5", "v12"], label: "v2（紅）／N9.5（白）分離／v12（綠）" },
+          { colors: ["v8", "N1.5", "v20"], label: "v8（黃）／N1.5（黑）分離／v20（藍紫）" }
+        ] },
+      { title: "低彩度模糊配色＋低明度分離色", titleEn: "",
+        description: "",
+        rule: { type: "separation" },
+        examples: [
+          { colors: ["p8", "N2", "p10"], label: "p8（淡黃）／N2（深灰）分離／p10（淡黃綠）" },
+          { colors: ["p16", "N2", "p18"], label: "p16（淡藍）／N2（深灰）分離／p18（淡藍紫）" }
+        ] },
+      { title: "低明度配色＋高明度分離色", titleEn: "",
+        description: "",
+        rule: { type: "separation" },
+        examples: [
+          { colors: ["dp16", "N9.5", "dp20"], label: "dp16（深藍）／N9.5（白）分離／dp20（深藍紫）" },
+          { colors: ["dk2", "N9.5", "dk6"], label: "dk2（暗紅）／N9.5（白）分離／dk6（暗黃橙）" }
+        ] }
+    ]
+  }
+];
+
 // ---- Node 匯出（測試用；瀏覽器中此區塊不執行） ----
 if (typeof module !== "undefined" && module.exports) {
   module.exports = {
     parseColorNotation: parseColorNotation,
     getNeutralColor: getNeutralColor,
-    getSchemeColor: getSchemeColor
+    getSchemeColor: getSchemeColor,
+    HAISHOKU_OVERVIEW: HAISHOKU_OVERVIEW,
+    HAISHOKU_CATEGORIES: HAISHOKU_CATEGORIES
   };
 }

@@ -58,3 +58,145 @@ assert.strictEqual(haishoku.getSchemeColor("N9.5"), haishoku.getNeutralColor(9.5
 assert.strictEqual(haishoku.getSchemeColor("W"), "#f5f5f5", "W = 白");
 
 console.log("Task 1 tests passed");
+
+// ---- 配色法資料結構 ----
+assert.strictEqual(haishoku.HAISHOKU_CATEGORIES.length, 6, "6 大類");
+assert.ok(haishoku.HAISHOKU_OVERVIEW.length > 0, "有概說文字");
+
+var totalSchemes = 0, totalExamples = 0;
+haishoku.HAISHOKU_CATEGORIES.forEach(function (cat) {
+  assert.ok(cat.id && cat.title && cat.layout && cat.description, cat.id + " 有 id/title/layout/description");
+  assert.ok(["equal", "accent", "separation"].indexOf(cat.layout) !== -1, cat.id + " layout 合法");
+  cat.schemes.forEach(function (scheme) {
+    totalSchemes++;
+    assert.ok(scheme.title, "小節有標題");
+    assert.ok(scheme.rule && scheme.rule.type, scheme.title + " 有領域規則");
+    assert.strictEqual(scheme.examples.length, 2, scheme.title + " 恰好 2 個範例");
+    scheme.examples.forEach(function (ex) {
+      totalExamples++;
+      assert.ok(ex.colors.length >= 2, scheme.title + " 範例至少 2 色");
+      assert.ok(ex.label, scheme.title + " 範例有說明");
+      ex.colors.forEach(function (notation) {
+        var hex = haishoku.getSchemeColor(notation);
+        assert.ok(/^#[0-9a-f]{6}$/.test(hex), notation + " 可取得合法顏色");
+      });
+    });
+  });
+});
+assert.strictEqual(totalSchemes, 18, "18 個小節");
+assert.strictEqual(totalExamples, 36, "36 個範例");
+
+// ---- 領域規則驗證（每個範例自動檢查其配色法規則） ----
+
+// 環狀色相差（1–24 色相環）
+function hueDiff(a, b) {
+  var d = Math.abs(a - b);
+  return Math.min(d, 24 - d);
+}
+
+// 彩度等級：純色剩餘比例（v=1；其他 = 1 − 混合量）
+function saturationLevel(toneId) {
+  var tone = pccs.findTone(toneId);
+  return tone.mix ? 1 - tone.mix.amount : 1;
+}
+
+// 渲染色的亮度（luma）
+function lumaOf(notation) {
+  var rgb = pccs.hexToRgb(haishoku.getSchemeColor(notation));
+  return 0.299 * rgb.r + 0.587 * rgb.g + 0.114 * rgb.b;
+}
+
+haishoku.HAISHOKU_CATEGORIES.forEach(function (cat) {
+  cat.schemes.forEach(function (scheme) {
+    var rule = scheme.rule;
+    scheme.examples.forEach(function (ex, exIdx) {
+      var label = scheme.title + " 範例" + (exIdx + 1);
+      var parsed = ex.colors.map(function (n) { return haishoku.parseColorNotation(n); });
+      var chrom = parsed.filter(function (p) { return p.type === "chromatic"; });
+      var tones = chrom.map(function (p) { return p.toneId; });
+      var hues = chrom.map(function (p) { return p.hueNum; });
+
+      if (rule.type === "hue-diff") {
+        // 兩兩色相差都在 [min, max]
+        for (var i = 0; i < chrom.length; i++) {
+          for (var j = i + 1; j < chrom.length; j++) {
+            var d = hueDiff(hues[i], hues[j]);
+            assert.ok(d >= rule.min && d <= rule.max,
+              label + "：色相差 " + d + " 應在 " + rule.min + "~" + rule.max);
+          }
+        }
+        // 同一色相配色（差 0）需色調互異，否則是同一個顏色
+        if (rule.max === 0) {
+          assert.strictEqual(new Set(tones).size, tones.length, label + "：色調互異");
+        }
+      }
+
+      if (rule.type === "same-tone") {
+        assert.strictEqual(new Set(tones).size, 1, label + "：色調相同");
+        assert.strictEqual(new Set(hues).size, chrom.length, label + "：色相互異");
+      }
+
+      if (rule.type === "different-tone-same-hue") {
+        assert.strictEqual(new Set(tones).size, chrom.length, label + "：色調互異");
+        assert.strictEqual(new Set(hues).size, 1, label + "：色相相同");
+      }
+
+      if (rule.type === "dominant") {
+        // 統一色相或統一色調（其一即可）
+        assert.ok(new Set(tones).size === 1 || new Set(hues).size === 1,
+          label + "：色相或色調統一");
+      }
+
+      if (rule.type === "hue-gradation") {
+        assert.strictEqual(new Set(tones).size, 1, label + "：色調相同");
+        for (var hi = 1; hi < hues.length; hi++) {
+          assert.ok(hues[hi] > hues[hi - 1], label + "：色相遞增");
+        }
+      }
+
+      if (rule.type === "lightness-gradation") {
+        assert.strictEqual(new Set(hues).size, 1, label + "：色相相同");
+        var lumas = ex.colors.map(lumaOf);
+        for (var li = 1; li < lumas.length; li++) {
+          assert.ok(lumas[li] < lumas[li - 1], label + "：明度嚴格遞減");
+        }
+      }
+
+      if (rule.type === "saturation-gradation") {
+        assert.strictEqual(new Set(hues).size, 1, label + "：色相相同");
+        var sats = tones.map(saturationLevel);
+        for (var si = 1; si < sats.length; si++) {
+          assert.ok(sats[si] < sats[si - 1], label + "：彩度嚴格遞減");
+        }
+      }
+
+      if (rule.type === "tone-gradation") {
+        assert.strictEqual(new Set(tones).size, chrom.length, label + "：色調互異");
+        assert.strictEqual(new Set(hues).size, 1, label + "：色相相同");
+      }
+
+      if (rule.type === "accent" || rule.type === "accent-warm") {
+        // 順序固定：基調、配合、重點 — 最後一個是 v 色調重點色，其餘非 v
+        var accent = parsed[parsed.length - 1];
+        assert.strictEqual(accent.type, "chromatic", label + "：重點色為有彩色");
+        assert.strictEqual(accent.toneId, "v", label + "：重點色為 v 色調");
+        parsed.slice(0, -1).forEach(function (p) {
+          assert.ok(p.type === "neutral" || p.toneId !== "v", label + "：基調/配合色非 v 色調");
+        });
+        // 暖色系重點：色相 1~8（紅～黃）
+        if (rule.type === "accent-warm") {
+          assert.ok(accent.hueNum >= 1 && accent.hueNum <= 8,
+            label + "：重點色為暖色系（色相 1~8）");
+        }
+      }
+
+      if (rule.type === "separation") {
+        // 順序固定：主色、分離色、主色 — 中間為無彩色
+        assert.strictEqual(parsed.length, 3, label + "：3 個顏色");
+        assert.strictEqual(parsed[1].type, "neutral", label + "：中間為無彩色分離色");
+      }
+    });
+  });
+});
+
+console.log("Task 2 tests passed");
