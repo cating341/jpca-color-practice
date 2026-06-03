@@ -1,0 +1,84 @@
+/* 清濁度測驗頁面樣式 */
+
+/* ---- 版面（沿用 PCCS 頁面 header pattern） ---- */
+.quiz-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  max-width: 768px;
+  margin: 0 auto;
+  padding: 1.5rem;
+}
+
+.back-link { color: var(--accent); text-decoration: none; font-size: 0.9rem; }
+.back-link:hover { text-decoration: underline; }
+
+.quiz-main { max-width: 768px; margin: 0 auto; padding: 0 1.5rem 3rem; }
+
+.quiz-question { font-size: 1.05rem; }
+.quiz-streak { color: #555; font-size: 0.9rem; }
+.quiz-streak b { color: var(--accent); font-size: 1.1rem; }
+
+/* ---- 選項色塊 ---- */
+.quiz-choices {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1rem;
+  margin: 1.5rem 0;
+}
+
+.choice { cursor: pointer; text-align: center; }
+
+.choice-swatch {
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  min-height: 120px;
+  border-radius: 8px;
+  border: 4px solid transparent;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.15);
+  transition: transform 0.15s, border-color 0.15s;
+}
+.choice:hover .choice-swatch { transform: scale(1.03); }
+.choice.selected .choice-swatch { border-color: var(--accent); }
+.choice.answered { cursor: default; }
+.choice.answered:hover .choice-swatch { transform: none; }
+
+/* ---- 公布答案後的標籤 ---- */
+.choice-label { font-size: 0.8rem; margin-top: 0.5rem; min-height: 3.2em; line-height: 1.5; }
+.choice-label .seidaku-tag {
+  display: block;
+  font-size: 0.75rem;
+  color: #555;
+}
+.choice-label .mark { font-weight: bold; margin-right: 0.2em; }
+.choice-label .mark.correct { color: #16a34a; }
+.choice-label .mark.wrong { color: #dc2626; }
+
+/* ---- 解說與按鈕 ---- */
+.quiz-explanation {
+  background: #f5f7ff;
+  border-left: 4px solid var(--accent);
+  padding: 0.75rem 1rem;
+  font-size: 0.95rem;
+}
+
+.quiz-button {
+  display: block;
+  margin: 1.5rem auto 0;
+  padding: 0.6rem 2.5rem;
+  font-size: 1rem;
+  color: #fff;
+  background: var(--accent);
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+}
+.quiz-button:hover:not(:disabled) { filter: brightness(1.1); }
+.quiz-button:disabled { background: #c5c5c5; cursor: not-allowed; }
+
+.hidden { display: none; }
+
+/* ---- 窄螢幕：色塊 2×2 ---- */
+@media (max-width: 600px) {
+  .quiz-choices { grid-template-columns: repeat(2, 1fr); }
+}

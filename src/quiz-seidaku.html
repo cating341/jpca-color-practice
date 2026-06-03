@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>清濁度測驗 | JPCA Practice</title>
+  <link rel="stylesheet" href="./css/style.css" />
+  <link rel="stylesheet" href="./css/quiz-seidaku.css" />
+</head>
+<body>
+  <header class="quiz-header">
+    <h1>清濁度測驗</h1>
+    <a href="./index.html" class="back-link">← 回到首頁</a>
+  </header>
+
+  <main class="quiz-main">
+    <section class="quiz-section">
+      <p class="quiz-question">下面四個顏色中，哪一個的<b>清濁屬性</b>和其他三個不同？</p>
+      <p class="quiz-streak">連續答對：<b id="streak-count">0</b></p>
+
+      <div id="choices" class="quiz-choices"></div>
+
+      <p id="quiz-explanation" class="quiz-explanation hidden"></p>
+
+      <button id="quiz-submit" class="quiz-button" disabled>送出答案</button>
+    </section>
+  </main>
+
+  <script src="./js/pccs-data.js"></script>
+  <script src="./js/quiz-seidaku-data.js"></script>
+  <script src="./js/quiz-seidaku.js"></script>
+</body>
+</html>
