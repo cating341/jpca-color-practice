@@ -82,11 +82,13 @@
       base.appendChild(renderAccentMark(example.colors[2]));
       row.appendChild(base);
       row.appendChild(renderSwatch(example.colors[1], 3));
-      // 基調欄同時標出疊在其上的重點色（基調 ＋ 重點），配合欄標出配合色；皆標角色說明
+      // 基調欄左標基調色、右標重點色（重點色註記對齊疊於基調右側的小方形，不與基調合併）
       var baseNote = makeNoteCell(5);
+      baseNote.classList.add("accent-note");
       baseNote.appendChild(renderRolePart("基調 ", example.colors[0]));
-      baseNote.appendChild(document.createTextNode(" ＋ "));
-      baseNote.appendChild(renderRolePart("重點 ", example.colors[2]));
+      var accentPart = renderRolePart("重點 ", example.colors[2]);
+      accentPart.classList.add("accent-mark-note");
+      baseNote.appendChild(accentPart);
       noteRow.appendChild(baseNote);
       var assortNote = makeNoteCell(3);
       assortNote.appendChild(renderRolePart("配合 ", example.colors[1]));

@@ -86,6 +86,14 @@
   color: #999;
 }
 
+/* 基調欄：基調註記靠左，重點註記靠右對齊疊在色塊右側的小方形 */
+.scheme-note.accent-note {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+}
+.scheme-note.accent-note .accent-mark-note { padding-right: 14px; }
+
 /* ---- 窄螢幕：範例上下排列 ---- */
 @media (max-width: 700px) {
   .scheme-examples { grid-template-columns: 1fr; }
