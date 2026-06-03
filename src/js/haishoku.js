@@ -4,6 +4,7 @@
 
   // 防禦：資料載入檢查
   if (typeof HAISHOKU_CATEGORIES === "undefined" || typeof HAISHOKU_OVERVIEW === "undefined" ||
+      typeof HAISHOKU_GROUPS === "undefined" ||
       typeof getSchemeColor === "undefined" || typeof hexToRgb === "undefined") {
     document.body.insertAdjacentHTML(
       "afterbegin",
@@ -109,16 +110,17 @@
     return wrap;
   }
 
-  // ---- 大類區塊渲染 ----
+  // ---- 類別區塊渲染（大類別下的單一配色法類別） ----
 
-  function renderCategory(category, index) {
+  function renderCategory(category) {
     var section = document.createElement("section");
     section.className = "haishoku-section";
     section.id = category.id;
 
-    var h2 = document.createElement("h2");
-    h2.textContent = (index + 1) + ". " + category.title;
-    section.appendChild(h2);
+    var h3 = document.createElement("h3");
+    h3.className = "category-title";
+    h3.textContent = category.title;
+    section.appendChild(h3);
 
     var desc = document.createElement("p");
     desc.className = "section-desc";
@@ -129,9 +131,10 @@
       var schemeEl = document.createElement("div");
       schemeEl.className = "scheme";
 
-      var h3 = document.createElement("h3");
-      h3.textContent = scheme.title + (scheme.titleEn ? "（" + scheme.titleEn + "）" : "");
-      schemeEl.appendChild(h3);
+      var h4 = document.createElement("h4");
+      h4.className = "scheme-title";
+      h4.textContent = scheme.title + (scheme.titleEn ? "（" + scheme.titleEn + "）" : "");
+      schemeEl.appendChild(h4);
 
       if (scheme.description) {
         var schemeDesc = document.createElement("p");
@@ -153,12 +156,42 @@
     return section;
   }
 
+  // ---- 大類別渲染（基本配色法／基本配色技法） ----
+
+  function categoryById(id) {
+    var found = HAISHOKU_CATEGORIES.filter(function (c) { return c.id === id; });
+    return found.length ? found[0] : null;
+  }
+
+  function renderGroup(group, index) {
+    var groupEl = document.createElement("section");
+    groupEl.className = "haishoku-group";
+    groupEl.id = group.id;
+
+    var h2 = document.createElement("h2");
+    h2.className = "group-title";
+    h2.textContent = (index + 1) + ". " + group.title;
+    groupEl.appendChild(h2);
+
+    var desc = document.createElement("p");
+    desc.className = "group-desc";
+    desc.textContent = group.description;
+    groupEl.appendChild(desc);
+
+    group.categoryIds.forEach(function (cid) {
+      var category = categoryById(cid);
+      if (category) groupEl.appendChild(renderCategory(category));
+    });
+
+    return groupEl;
+  }
+
   // ---- 初始化 ----
 
   document.getElementById("haishoku-overview").textContent = HAISHOKU_OVERVIEW;
 
   var container = document.getElementById("haishoku-sections");
-  HAISHOKU_CATEGORIES.forEach(function (category, index) {
-    container.appendChild(renderCategory(category, index));
+  HAISHOKU_GROUPS.forEach(function (group, index) {
+    container.appendChild(renderGroup(group, index));
   });
 })();

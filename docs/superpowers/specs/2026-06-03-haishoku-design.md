@@ -19,17 +19,21 @@
 ## 頁面結構（`src/haishoku.html`）
 
 ```
-基本配色法（JPCA M1 初級）          ← 回到首頁
+配色基礎（JPCA M1 初級）            ← 回到首頁
 ├─ 配色的基本概念（概說）
-├─ 1. 色相配色      （同一／類似／對照／補色 — 4 小節）
-├─ 2. 色調配色      （同一／類似／對照 — 3 小節）
-├─ 3. 主調配色      （Dominant Color / Tone — 1 小節）
-├─ 4. 漸層配色      （色相／明度／彩度／色調 — 4 小節）
-├─ 5. 重點配色      （3 種情境）
-└─ 6. 分離配色      （3 種情境）
+├─ 1. 基本配色法    （兩個顏色的配色）
+│   ├─ 色相配色     （同一／類似／對照／補色 — 4 小節）
+│   └─ 色調配色     （同一／類似／對照 — 3 小節）
+└─ 2. 基本配色技法  （超過兩個顏色的配色）
+    ├─ 主調配色     （Dominant Color / Tone — 1 小節，3 色）
+    ├─ 漸層配色     （色相／明度／彩度／色調 — 4 小節，4 色）
+    ├─ 重點配色     （3 種情境，3 色）
+    └─ 分離配色     （3 種情境，3 色）
 ```
 
-每小節：標題（中文＋英文）→ 定義說明 → 2 個色卡範例。
+頁面主標題為「配色基礎」。其下分兩大類別：**基本配色法**（兩個顏色的配色，以色相／色調的相對關係為基礎）與**基本配色技法**（超過兩個顏色的配色：主調、漸層、重點、分離等手法）。分類準則＝範例使用的顏色數量（2 色 vs 超過 2 色），與 JPCA「配色」與「配色技法」的理論分類一致；測試（`HAISHOKU_GROUPS`）強制保證此準則。
+
+階層：大類別（`<h2 class="group-title">`，編號 1／2）→ 類別（`<h3 class="category-title">`）→ 小節（`<h4 class="scheme-title">`，中文＋英文）→ 定義說明 → 2 個色卡範例。
 
 ### 色卡版面（三種 layout）
 
@@ -135,7 +139,8 @@ getNeutralColor(2)           // → hex（PCCS_GRAYS 線性插值；超出範圍
 
 // 資料
 HAISHOKU_OVERVIEW            // 概說文字
-HAISHOKU_CATEGORIES          // 6 大類：[{ id, title, titleEn, description, layout, schemes: [...] }]
+HAISHOKU_GROUPS              // 2 大類別：[{ id: "basic"|"technique", title, description, categoryIds: [...] }]
+HAISHOKU_CATEGORIES          // 6 類別：[{ id, title, titleEn, description, layout, schemes: [...] }]
 //   每個 scheme：{ title, titleEn, description, examples: [{ colors: ["v2","p2"], label }, ...] }
 ```
 
@@ -152,7 +157,7 @@ HAISHOKU_CATEGORIES          // 6 大類：[{ id, title, titleEn, description, l
 ## 渲染層（`src/js/haishoku.js`）
 
 - 防禦：檢查 `HAISHOKU_CATEGORIES`／`getSchemeColor` 已定義，否則顯示「資料載入失敗」（沿用既有 pattern）
-- 依 `HAISHOKU_CATEGORIES` 渲染各 section 與小節
+- 依 `HAISHOKU_GROUPS` 渲染兩個大類別（編號 1／2），各大類別依 `categoryIds` 取出並渲染其下 `HAISHOKU_CATEGORIES` 類別與小節
 - 每個範例依其 category 的 layout（equal／accent／separation）渲染色卡
 - PCCS 記號渲染於色塊下方的註記列（`.scheme-note-row`），與色塊以等比例 flex 對齊；色塊本身不含文字
 
@@ -162,8 +167,8 @@ HAISHOKU_CATEGORIES          // 6 大類：[{ id, title, titleEn, description, l
 
 ```html
 <a href="./haishoku.html" class="topic-card">
-  <h2>基本配色法</h2>
-  <p>色相・色調・主調・漸層・重點・分離配色（M1 初級範圍）</p>
+  <h2>配色基礎</h2>
+  <p>基本配色法與配色技法：色相・色調・主調・漸層・重點・分離（M1 初級範圍）</p>
 </a>
 ```
 
@@ -188,7 +193,8 @@ HAISHOKU_CATEGORIES          // 6 大類：[{ id, title, titleEn, description, l
 
 ### 配色法規則（每個範例自動驗證）
 
-- [ ] 結構：6 大類、每小節恰好 2 個範例、每個範例的每個記號都能解析
+- [ ] 結構：2 大類別（basic／technique）、6 類別、每小節恰好 2 個範例、每個範例的每個記號都能解析
+- [ ] 分組：基本配色法的範例皆 2 色、基本配色技法的範例皆超過 2 色；6 類別無重複、無遺漏地歸入兩大類別
 - [ ] 同一色相：範例內所有色相相同、色調互異
 - [ ] 類似色相：環狀色相差 1~3
 - [ ] 對照色相：環狀色相差 8~10
@@ -208,7 +214,8 @@ HAISHOKU_CATEGORIES          // 6 大類：[{ id, title, titleEn, description, l
 
 1. `npm run dev` 開啟 `haishoku.html`
 2. 檢查清單：
-   - [ ] 6 大類、18 個小節（4＋3＋1＋4＋3＋3）、每小節 2 個範例（共 36 個範例）全部渲染
+   - [ ] 2 大類別（1. 基本配色法／2. 基本配色技法）標題與說明渲染；6 類別正確歸入對應大類別
+   - [ ] 6 類別、18 個小節（4＋3＋1＋4＋3＋3）、每小節 2 個範例（共 36 個範例）全部渲染
    - [ ] 重點配色色卡呈現面積比例（基調寬、重點窄）
    - [ ] 分離配色呈現「主色｜窄分離帶｜主色」
    - [ ] PCCS 記號顯示於色塊下方、與色塊對齊，色塊上無文字

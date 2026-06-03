@@ -83,6 +83,24 @@ function getSchemeColor(notation) {
 
 var HAISHOKU_OVERVIEW = "配色是指兩個以上的色彩組合。好的配色能傳達特定的情感和印象。在此單元中，我們將學習基於 PCCS 色相與色調系統的基礎配色法則。";
 
+// 兩個大類別：以「使用的顏色數量」區分
+//   基本配色法（basic）  ＝ 兩個顏色的配色（色相、色調的相對關係）
+//   基本配色技法（technique）＝ 超過兩個顏色的配色（主調、漸層、重點、分離等手法）
+var HAISHOKU_GROUPS = [
+  {
+    id: "basic",
+    title: "基本配色法",
+    description: "兩個顏色之間的配色，依色相或色調在系統上的相對關係決定印象。",
+    categoryIds: ["hue-schemes", "tone-schemes"]
+  },
+  {
+    id: "technique",
+    title: "基本配色技法",
+    description: "使用超過兩個顏色的配色手法，透過主調、漸層、重點、分離等方式組織多個色彩。",
+    categoryIds: ["dominant-schemes", "gradation", "accent", "separation"]
+  }
+];
+
 var HAISHOKU_CATEGORIES = [
   {
     id: "hue-schemes",
@@ -267,6 +285,7 @@ if (typeof module !== "undefined" && module.exports) {
     getNeutralColor: getNeutralColor,
     getSchemeColor: getSchemeColor,
     HAISHOKU_OVERVIEW: HAISHOKU_OVERVIEW,
+    HAISHOKU_GROUPS: HAISHOKU_GROUPS,
     HAISHOKU_CATEGORIES: HAISHOKU_CATEGORIES
   };
 }

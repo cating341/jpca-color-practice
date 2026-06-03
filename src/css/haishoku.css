@@ -21,13 +21,30 @@
   padding: 0.75rem 1rem;
 }
 
-.haishoku-section { margin-bottom: 3rem; }
-.haishoku-section h2 { border-bottom: 2px solid var(--accent); padding-bottom: 0.4rem; }
+/* ---- 大類別（基本配色法／基本配色技法） ---- */
+.haishoku-group { margin-bottom: 3.5rem; }
+.group-title {
+  font-size: 1.5rem;
+  color: #fff;
+  background: var(--accent);
+  padding: 0.5rem 0.9rem;
+  border-radius: 6px;
+  margin-bottom: 0.4rem;
+}
+.group-desc { color: #555; font-size: 0.92rem; margin: 0 0 1.5rem; }
+
+/* ---- 類別（色相配色、漸層配色…） ---- */
+.haishoku-section { margin: 0 0 2.5rem; }
+.category-title {
+  font-size: 1.2rem;
+  border-bottom: 2px solid var(--accent);
+  padding-bottom: 0.4rem;
+}
 .section-desc { color: #555; font-size: 0.9rem; }
 
 /* ---- 小節 ---- */
 .scheme { margin: 1.5rem 0 2rem; }
-.scheme h3 { margin-bottom: 0.3rem; font-size: 1.05rem; }
+.scheme-title { margin-bottom: 0.3rem; font-size: 1.05rem; }
 .scheme-desc { color: #555; font-size: 0.9rem; margin-top: 0; }
 
 /* ---- 範例 ---- */

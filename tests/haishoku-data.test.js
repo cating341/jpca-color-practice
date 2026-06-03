@@ -86,6 +86,45 @@ haishoku.HAISHOKU_CATEGORIES.forEach(function (cat) {
 assert.strictEqual(totalSchemes, 18, "18 個小節");
 assert.strictEqual(totalExamples, 36, "36 個範例");
 
+// ---- 大類別分組（基本配色法＝兩色／基本配色技法＝超過兩色） ----
+assert.ok(Array.isArray(haishoku.HAISHOKU_GROUPS), "HAISHOKU_GROUPS 為陣列");
+assert.strictEqual(haishoku.HAISHOKU_GROUPS.length, 2, "兩個大類別");
+var groupById = {};
+haishoku.HAISHOKU_GROUPS.forEach(function (g) {
+  assert.ok(g.id && g.title && g.description, g.id + " 大類別有 id/title/description");
+  groupById[g.id] = g;
+});
+assert.ok(groupById.basic && groupById.technique, "大類別含 basic 與 technique");
+assert.strictEqual(groupById.basic.title, "基本配色法", "basic 標題");
+assert.strictEqual(groupById.technique.title, "基本配色技法", "technique 標題");
+
+// 每個大類別在 categoryIds 列出其下類別，且涵蓋全部 6 類、無重複
+var seenCats = {};
+haishoku.HAISHOKU_GROUPS.forEach(function (g) {
+  assert.ok(Array.isArray(g.categoryIds) && g.categoryIds.length > 0, g.id + " 有 categoryIds");
+  g.categoryIds.forEach(function (cid) {
+    assert.ok(!seenCats[cid], cid + " 只屬於一個大類別");
+    seenCats[cid] = true;
+    var cat = haishoku.HAISHOKU_CATEGORIES.filter(function (c) { return c.id === cid; })[0];
+    assert.ok(cat, cid + " 對應到實際類別");
+    // 規則：basic 的範例皆恰好 2 色；technique 的範例皆超過 2 色
+    cat.schemes.forEach(function (scheme) {
+      scheme.examples.forEach(function (ex) {
+        if (g.id === "basic") {
+          assert.strictEqual(ex.colors.length, 2, cid + "（基本配色法）範例應為 2 色");
+        } else {
+          assert.ok(ex.colors.length > 2, cid + "（基本配色技法）範例應超過 2 色");
+        }
+      });
+    });
+  });
+});
+assert.strictEqual(Object.keys(seenCats).length, 6, "6 類全部歸入大類別");
+// 預期分組
+assert.deepStrictEqual(groupById.basic.categoryIds, ["hue-schemes", "tone-schemes"], "基本配色法＝色相＋色調");
+assert.deepStrictEqual(groupById.technique.categoryIds,
+  ["dominant-schemes", "gradation", "accent", "separation"], "基本配色技法＝主調＋漸層＋重點＋分離");
+
 // ---- 領域規則驗證（每個範例自動檢查其配色法規則） ----
 
 // 環狀色相差（1–24 色相環）
