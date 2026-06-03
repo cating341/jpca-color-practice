@@ -46,6 +46,7 @@
     if (layout === "accent") flexRatios = [5, 3, 1];
     else if (layout === "separation") flexRatios = [4, 1, 4];
 
+    // accent/separation 的資料契約保證恰好 3 色（測試強制驗證），故 flexRatios 對齊；equal 全部等寬
     example.colors.forEach(function (notation, i) {
       var grow = flexRatios ? flexRatios[i] : 1;
       row.appendChild(renderSwatch(notation, grow));
