@@ -27,6 +27,7 @@
   // 標準配色用：小色相環，標出範例取色點並連出幾何
   function renderHueWheelMini(colors) {
     var SVG_NS = "http://www.w3.org/2000/svg";
+    // rDot：取色點軌道半徑（44+5=49 < 60，確保高亮圓不超出邊界）
     var size = 120, cx = 60, cy = 60, rDot = 44;
     function polar(r, hueNum) {            // 8:Y 正上方、順時針
       var deg = (hueNum - 8) * 15;
@@ -55,6 +56,7 @@
       .map(function (notation) { return parseColorNotation(notation); })
       .filter(function (pc) { return pc.type === "chromatic"; })
       .map(function (pc) { return pc.hueNum; })
+      // 依色相數值排序連線；分裂補色三角形本身不對稱（如 2,13,15），非 bug
       .sort(function (a, b) { return a - b; });
 
     // 連線（2 點＝線；≥3 點＝封閉多邊形）
