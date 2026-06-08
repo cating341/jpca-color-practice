@@ -102,7 +102,7 @@ h.HARMONY_SECTIONS.forEach(function (sec) {
         var ok = false;
         for (var b = 0; b < 3 && !ok; b++) {
           var others = [0, 1, 2].filter(function (x) { return x !== b; });
-          var comp = ((hues[b] + 12 - 1) % 24) + 1; // 補色
+          var comp = ((hues[b] + 12 - 1) % 24) + 1; // 補色（1-24 環：+12 取模，維持 1-based）
           var d0 = hueDiff(hues[others[0]], comp);
           var d1 = hueDiff(hues[others[1]], comp);
           if (d0 === d1 && d0 >= 1 && d0 <= 2) ok = true;
@@ -117,6 +117,7 @@ h.HARMONY_SECTIONS.forEach(function (sec) {
       }
       if (t === "natural") {
         // 較黃（blueness 小）者 luma 較高
+        // 註：若兩色與色相 8 等距（blueness 相同），預設取 index 0；新增範例應避免此情境
         var yellower = bluenessOf(hues[0]) <= bluenessOf(hues[1]) ? 0 : 1;
         var bluer = 1 - yellower;
         assert.ok(lumaOf(ex.colors[yellower]) > lumaOf(ex.colors[bluer]),
@@ -135,6 +136,7 @@ h.HARMONY_SECTIONS.forEach(function (sec) {
         });
       }
       if (t === "tone-in-tone") {
+        // 現有範例均同一色調；若日後新增「類似色調」範例，需改為 toneDist 門檻檢查
         assert.strictEqual(new Set(tones).size, 1, label + "：色調統一");
         assert.ok(tones.indexOf("v") === -1, label + "：不含 v");
       }
@@ -161,8 +163,15 @@ h.HARMONY_SECTIONS.forEach(function (sec) {
       }
       if (t === "tricolor") {
         assert.strictEqual(parsed.length, 3, label + "：3 色");
+        // 通常含高彩度色與黑／白：至少一個無彩色或 v 色調
+        var triStrong = parsed.some(function (p) {
+          return p.type === "neutral" || p.toneId === "v";
+        });
+        assert.ok(triStrong, label + "：含 v 或無彩色（高對比）");
       }
       if (t === "tone-on-tone") {
+        // 假設 tone-on-tone 範例均為 2 色；若新增 3 色範例需改為全對比較
+        assert.strictEqual(tones.length, 2, label + "：目前僅限 2 色範例");
         assert.strictEqual(new Set(hues).size, 1, label + "：色相統一");
         assert.ok(toneDist(tones[0], tones[1]) >= 150,
           label + "：色調明度差顯著（距離 ≥150）");
