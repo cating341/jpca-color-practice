@@ -1,9 +1,6 @@
 // 進階配色（M2-U6 色彩調和論）— 純邏輯資料層，不碰 DOM
+// 僅存配色記號字串；顏色解析由渲染層用 pccs-data.js 的 getSchemeColor 處理。
 // 瀏覽器：以 <script> 載入（需先載入 pccs-data.js）；Node：可 require（測試用）
-
-var _pccs = (typeof module !== "undefined" && module.exports)
-  ? require("./pccs-data.js")
-  : { getSchemeColor: getSchemeColor };
 
 var HARMONY_OVERVIEW = "延續基礎配色法，本單元進入色彩調和論：透過色相環的幾何關係，以及「依色相或色調組織、產生類似或對比效果」的分類框架，理解各種進階配色技法在服裝上的印象與應用。";
 
@@ -38,7 +35,10 @@ var HARMONY_MATRIX = {
   ]
 };
 
-// 各區段 → 配色法 → 範例。geometry:true 觸發 SVG 色相環。
+// 各區段 → 配色法 → 範例。
+// geometry:true → 渲染層加畫 SVG 色相環；省略該鍵（或 false）→ 不畫。
+// 註：standard 區段的幾何配色法（dyad/triad/tetrad/split-complement）不屬於分類表，
+//     故分類表只做單向檢查（matrix→sections）。
 var HARMONY_SECTIONS = [
   {
     id: "standard", title: "標準配色（幾何）", geometry: true,
