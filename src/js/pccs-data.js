@@ -239,7 +239,7 @@ function getNeutralColor(value) {
       );
     }
   }
-  throw new Error("getNeutralColor: unexpected value " + value);
+  throw new Error("getNeutralColor: unexpected value " + value); // 防禦：不應到達
 }
 
 // 取得任意記號的顏色（有彩色 → getColor；無彩色 → 灰階插值）

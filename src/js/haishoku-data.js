@@ -9,7 +9,7 @@ var _pccs = (typeof module !== "undefined" && module.exports)
       parseColorNotation: parseColorNotation, getNeutralColor: getNeutralColor,
       getSchemeColor: getSchemeColor };
 
-// ---- 記號工具（已下放至 pccs-data.js，此處取得供測試 re-export） ----
+// ---- 記號工具（已下放至 pccs-data.js）：以顯式變數供 haishoku.js 使用，並由 module.exports 供測試 ----
 var parseColorNotation = _pccs.parseColorNotation;
 var getNeutralColor = _pccs.getNeutralColor;
 var getSchemeColor = _pccs.getSchemeColor;
