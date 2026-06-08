@@ -19,7 +19,7 @@
   align-items: center; justify-content: center; }
 .matrix-cell { background: #fafafa; border: 1px solid #e0e0e0; border-radius: 4px;
   padding: .6rem; display: flex; flex-direction: column; gap: .4rem; min-height: 64px; }
-.matrix-item { display: inline-block; color: #06c; text-decoration: none; }
+.matrix-item { display: inline-block; color: var(--accent); text-decoration: none; }
 .matrix-item:hover { text-decoration: underline; }
 .matrix-straddle { display: flex; flex-wrap: wrap; gap: .75rem; margin-top: .75rem; }
 .straddle-box { border: 1px dashed #999; border-radius: 4px; padding: .4rem .7rem;
