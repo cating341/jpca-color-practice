@@ -183,6 +183,72 @@ function getColor(toneId, hueNum) {
   return mixColor(hue.vivid, tone.mix);
 }
 
+// ---- PCCS 記號解析（供配色頁使用） ----
+
+// 解析 PCCS 配色記號：
+//   有彩色："v2"、"ltg20" → { type: "chromatic", toneId, hueNum }
+//   無彩色："N2"、"N9.5" → { type: "neutral", value }
+//   別名："W"、"Wh" 視同 N9.5（白）；"Bk" 視同 N1.5（黑）
+function parseColorNotation(notation) {
+  if (typeof notation !== "string" || notation.length === 0) {
+    throw new Error("parseColorNotation: invalid notation " + notation);
+  }
+  if (notation === "W" || notation === "Wh") return { type: "neutral", value: 9.5 };
+  if (notation === "Bk") return { type: "neutral", value: 1.5 };
+
+  var neutralMatch = notation.match(/^N(\d+(?:\.\d+)?)$/);
+  if (neutralMatch) {
+    var nval = parseFloat(neutralMatch[1]);
+    if (nval < 1.5 || nval > 9.5) {
+      throw new Error("parseColorNotation: neutral value out of range in " + notation);
+    }
+    return { type: "neutral", value: nval };
+  }
+
+  var chromaticMatch = notation.match(/^([a-z]+)(\d+)$/);
+  if (chromaticMatch) {
+    var toneId = chromaticMatch[1];
+    var hueNum = parseInt(chromaticMatch[2], 10);
+    if (!findTone(toneId)) {
+      throw new Error("parseColorNotation: unknown tone in " + notation);
+    }
+    if (hueNum < 1 || hueNum > 24) {
+      throw new Error("parseColorNotation: hue out of range in " + notation);
+    }
+    return { type: "chromatic", toneId: toneId, hueNum: hueNum };
+  }
+
+  throw new Error("parseColorNotation: invalid notation " + notation);
+}
+
+// 依明度值在 PCCS_GRAYS 之間線性插值；超出範圍 clamp 到 [1.5, 9.5]
+function getNeutralColor(value) {
+  var grays = PCCS_GRAYS; // 明度由大到小排列（9.5 → 1.5）
+  if (value >= grays[0].value) return grays[0].hex;
+  if (value <= grays[grays.length - 1].value) return grays[grays.length - 1].hex;
+
+  for (var i = 0; i < grays.length - 1; i++) {
+    var upper = grays[i], lower = grays[i + 1];
+    if (value <= upper.value && value >= lower.value) {
+      var t = (value - lower.value) / (upper.value - lower.value);
+      var up = hexToRgb(upper.hex), lo = hexToRgb(lower.hex);
+      return rgbToHex(
+        lo.r + (up.r - lo.r) * t,
+        lo.g + (up.g - lo.g) * t,
+        lo.b + (up.b - lo.b) * t
+      );
+    }
+  }
+  throw new Error("getNeutralColor: unexpected value " + value);
+}
+
+// 取得任意記號的顏色（有彩色 → getColor；無彩色 → 灰階插值）
+function getSchemeColor(notation) {
+  var parsed = parseColorNotation(notation);
+  if (parsed.type === "neutral") return getNeutralColor(parsed.value);
+  return getColor(parsed.toneId, parsed.hueNum);
+}
+
 // ---- Node 匯出（測試用；瀏覽器中此區塊不執行） ----
 if (typeof module !== "undefined" && module.exports) {
   module.exports = {
@@ -195,6 +261,9 @@ if (typeof module !== "undefined" && module.exports) {
     PCCS_GRAYS: PCCS_GRAYS,
     findHue: findHue,
     findTone: findTone,
-    getColor: getColor
+    getColor: getColor,
+    parseColorNotation: parseColorNotation,
+    getNeutralColor: getNeutralColor,
+    getSchemeColor: getSchemeColor
   };
 }

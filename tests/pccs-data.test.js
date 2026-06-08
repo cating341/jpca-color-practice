@@ -122,3 +122,35 @@ assert.throws(function () { data.getColor("xx", 8); }, /unknown toneId/, "未知
 assert.throws(function () { data.getColor("v", 99); }, /unknown hueNum/, "未知色相拋錯");
 
 console.log("Task 3 tests passed");
+
+// ---- 記號解析工具（自 haishoku 下放） ----
+assert.deepStrictEqual(data.parseColorNotation("v2"),
+  { type: "chromatic", toneId: "v", hueNum: 2 }, "v2");
+assert.deepStrictEqual(data.parseColorNotation("ltg20"),
+  { type: "chromatic", toneId: "ltg", hueNum: 20 }, "ltg20");
+assert.deepStrictEqual(data.parseColorNotation("N2"),
+  { type: "neutral", value: 2 }, "N2");
+assert.deepStrictEqual(data.parseColorNotation("N9.5"),
+  { type: "neutral", value: 9.5 }, "N9.5");
+assert.deepStrictEqual(data.parseColorNotation("W"),
+  { type: "neutral", value: 9.5 }, "W = N9.5");
+// 新增：Bk = 黑(N1.5)、Wh = 白(N9.5)
+assert.deepStrictEqual(data.parseColorNotation("Bk"),
+  { type: "neutral", value: 1.5 }, "Bk = N1.5");
+assert.deepStrictEqual(data.parseColorNotation("Wh"),
+  { type: "neutral", value: 9.5 }, "Wh = N9.5");
+
+// 非法記號拋錯
+["xx", "v99", "v0", "v", "N", "", "2v", "zz8", "N0", "N10"].forEach(function (bad) {
+  assert.throws(function () { data.parseColorNotation(bad); },
+    /parseColorNotation/, "非法記號拋錯: " + JSON.stringify(bad));
+});
+
+// 灰階插值與顏色計算
+assert.strictEqual(data.getNeutralColor(9.5), "#f5f5f5", "N9.5 = 白");
+assert.strictEqual(data.getNeutralColor(1.5), "#262626", "N1.5 = 黑");
+assert.strictEqual(data.getSchemeColor("v8"), data.getColor("v", 8), "v8 一致");
+assert.strictEqual(data.getSchemeColor("Bk"), "#262626", "Bk = 黑");
+assert.strictEqual(data.getSchemeColor("Wh"), "#f5f5f5", "Wh = 白");
+
+console.log("Task 4 tests passed");
