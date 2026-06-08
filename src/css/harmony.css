@@ -2,14 +2,15 @@
 .harmony-header h1 { margin: 0 0 .25rem; font-size: 1.4rem; }
 .harmony-main { max-width: 860px; margin: 0 auto; padding: 1rem 1.25rem 4rem; }
 .harmony-overview { color: #444; line-height: 1.7; }
-.back-link { color: #06c; text-decoration: none; font-size: .9rem; }
+.back-link { color: var(--accent); text-decoration: none; font-size: .9rem; }
 
 .group-title { font-size: 1.15rem; margin: 2rem 0 .5rem; padding-bottom: .3rem;
   border-bottom: 2px solid #333; }
 .group-desc { color: #555; line-height: 1.6; margin: 0 0 1rem; }
 
 /* 分類表 */
-.matrix-grid { display: grid; grid-template-columns: auto 1fr 1fr; gap: 6px; }
+#harmony-matrix { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+.matrix-grid { display: grid; grid-template-columns: auto 1fr 1fr; gap: 6px; min-width: 480px; }
 .matrix-corner { background: transparent; }
 .matrix-colhead { background: #eef0e6; font-weight: 600; text-align: center;
   padding: .5rem; border-radius: 4px; }
@@ -31,16 +32,10 @@
 .scheme-desc { color: #555; line-height: 1.6; margin: 0 0 .75rem; }
 .scheme-examples { display: flex; flex-direction: column; gap: 1rem; }
 .scheme-swatch-row { display: flex; height: 56px; border-radius: 4px; overflow: hidden; }
-.scheme-swatch { min-width: 0; }
+.scheme-swatch { min-width: 0; flex-basis: 0; }
 .scheme-note-row { display: flex; margin-top: 4px; }
-.scheme-note { text-align: center; font-size: .8rem; color: #666; }
+.scheme-note { text-align: center; font-size: .8rem; color: #666; flex-basis: 0; }
 .scheme-caption { font-size: .85rem; color: #444; margin-top: .35rem; }
 
 /* SVG 色相環（Task 5） */
 .hue-wheel-mini { display: block; margin: 0 auto .5rem; }
-
-@media (max-width: 480px) {
-  .matrix-grid { grid-template-columns: auto 1fr; }
-  .matrix-grid .matrix-colhead:nth-child(3) { display: none; }
-  .matrix-rowhead { writing-mode: horizontal-tb; }
-}

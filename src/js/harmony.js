@@ -56,6 +56,7 @@
     return a;
   }
   function renderMatrix(m) {
+    var container = document.createElement("div");
     var grid = document.createElement("div");
     grid.className = "matrix-grid";
     // 表頭列
@@ -72,7 +73,6 @@
         grid.appendChild(cell);
       });
     });
-    var container = document.getElementById("harmony-matrix");
     container.appendChild(grid);
     // 跨界特例（顯示於表格下方，標明跨界語意）
     var straddleWrap = document.createElement("div");
@@ -89,6 +89,7 @@
       straddleWrap.appendChild(box);
     });
     container.appendChild(straddleWrap);
+    return container;
   }
   function cellEl(cls, text) {
     var d = document.createElement("div");
@@ -136,7 +137,7 @@
 
   // ---- 初始化 ----
   document.getElementById("harmony-overview").textContent = HARMONY_OVERVIEW;
-  renderMatrix(HARMONY_MATRIX);
+  document.getElementById("harmony-matrix").appendChild(renderMatrix(HARMONY_MATRIX));
   var container = document.getElementById("harmony-sections");
   HARMONY_SECTIONS.forEach(function (sec) { container.appendChild(renderSection(sec)); });
 })();
