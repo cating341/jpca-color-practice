@@ -51,3 +51,124 @@ matrixIds.forEach(function (id) {
 });
 
 console.log("Harmony structure tests passed");
+
+// ---- 領域規則驗證 ----
+
+function hueDiff(a, b) {            // 環狀色相差（1–24）
+  var d = Math.abs(a - b);
+  return Math.min(d, 24 - d);
+}
+function lumaOf(n) {
+  var c = pccs.hexToRgb(pccs.getSchemeColor(n));
+  return 0.299 * c.r + 0.587 * c.g + 0.114 * c.b;
+}
+// 「偏藍程度」：與最黃色相 8 的環狀距離越大越偏藍（0=最黃，12=最藍）
+function bluenessOf(hueNum) { return hueDiff(hueNum, 8); }
+// 色調圖座標距離
+function toneDist(a, b) {
+  var pa = pccs.findTone(a).spotPos, pb = pccs.findTone(b).spotPos;
+  return Math.sqrt(Math.pow(pa.x - pb.x, 2) + Math.pow(pa.y - pb.y, 2));
+}
+
+h.HARMONY_SECTIONS.forEach(function (sec) {
+  sec.schemes.forEach(function (sc) {
+    sc.examples.forEach(function (ex, idx) {
+      var label = sc.title + " 範例" + (idx + 1);
+      var parsed = ex.colors.map(function (n) { return pccs.parseColorNotation(n); });
+      var chrom = parsed.filter(function (p) { return p.type === "chromatic"; });
+      var tones = chrom.map(function (p) { return p.toneId; });
+      var hues = chrom.map(function (p) { return p.hueNum; });
+      var t = sc.rule.type;
+
+      if (t === "dyad") {
+        assert.strictEqual(chrom.length, 2, label + "：2 色");
+        assert.strictEqual(hueDiff(hues[0], hues[1]), 12, label + "：色相差 12（補色）");
+      }
+      if (t === "triad") {
+        assert.strictEqual(chrom.length, 3, label + "：3 色");
+        for (var i = 0; i < 3; i++)
+          for (var j = i + 1; j < 3; j++)
+            assert.strictEqual(hueDiff(hues[i], hues[j]), 8, label + "：兩兩差 8");
+      }
+      if (t === "tetrad") {
+        assert.strictEqual(chrom.length, 4, label + "：4 色");
+        var sorted = hues.slice().sort(function (a, b) { return a - b; });
+        for (var k = 1; k < 4; k++)
+          assert.strictEqual(sorted[k] - sorted[k - 1], 6, label + "：間隔 6");
+      }
+      if (t === "split-complement") {
+        assert.strictEqual(chrom.length, 3, label + "：3 色");
+        // 存在一基底，另兩色等距分居其補色兩側（距離 ≤2）
+        var ok = false;
+        for (var b = 0; b < 3 && !ok; b++) {
+          var others = [0, 1, 2].filter(function (x) { return x !== b; });
+          var comp = ((hues[b] + 12 - 1) % 24) + 1; // 補色
+          var d0 = hueDiff(hues[others[0]], comp);
+          var d1 = hueDiff(hues[others[1]], comp);
+          if (d0 === d1 && d0 >= 1 && d0 <= 2) ok = true;
+        }
+        assert.ok(ok, label + "：兩色分居補色兩側等距");
+      }
+      if (t === "dominant-color") {
+        assert.strictEqual(new Set(hues).size, 1, label + "：色相統一");
+      }
+      if (t === "dominant-tone") {
+        assert.strictEqual(new Set(tones).size, 1, label + "：色調統一");
+      }
+      if (t === "natural") {
+        // 較黃（blueness 小）者 luma 較高
+        var yellower = bluenessOf(hues[0]) <= bluenessOf(hues[1]) ? 0 : 1;
+        var bluer = 1 - yellower;
+        assert.ok(lumaOf(ex.colors[yellower]) > lumaOf(ex.colors[bluer]),
+          label + "：偏黃較亮、偏藍較暗");
+      }
+      if (t === "complex") {
+        var y = bluenessOf(hues[0]) <= bluenessOf(hues[1]) ? 0 : 1;
+        var bl = 1 - y;
+        assert.ok(lumaOf(ex.colors[y]) < lumaOf(ex.colors[bl]),
+          label + "：反自然（偏黃較暗、偏藍較亮）");
+      }
+      if (t === "tonal") {
+        tones.forEach(function (id) {
+          assert.ok(["sf", "d", "ltg", "g"].indexOf(id) !== -1,
+            label + "：色調 " + id + " 應 ∈ {sf,d,ltg,g}");
+        });
+      }
+      if (t === "tone-in-tone") {
+        assert.strictEqual(new Set(tones).size, 1, label + "：色調統一");
+        assert.ok(tones.indexOf("v") === -1, label + "：不含 v");
+      }
+      if (t === "camaieu") {
+        assert.strictEqual(new Set(hues).size, 1, label + "：色相統一");
+        for (var ci = 0; ci < tones.length; ci++)
+          for (var cj = ci + 1; cj < tones.length; cj++)
+            assert.ok(tones[ci] === tones[cj] || toneDist(tones[ci], tones[cj]) <= 100,
+              label + "：色調極類似（距離 ≤100）");
+      }
+      if (t === "faux-camaieu") {
+        assert.strictEqual(chrom.length, 2, label + "：2 色");
+        var hd = hueDiff(hues[0], hues[1]);
+        assert.ok(hd >= 1 && hd <= 2, label + "：色相差 1~2");
+        assert.ok(tones[0] === tones[1] || toneDist(tones[0], tones[1]) <= 120,
+          label + "：色調類似");
+      }
+      if (t === "bicolor") {
+        assert.strictEqual(parsed.length, 2, label + "：2 色");
+        var hasStrong = parsed.some(function (p) {
+          return p.type === "neutral" || p.toneId === "v";
+        });
+        assert.ok(hasStrong, label + "：含 v 或無彩色（高對比）");
+      }
+      if (t === "tricolor") {
+        assert.strictEqual(parsed.length, 3, label + "：3 色");
+      }
+      if (t === "tone-on-tone") {
+        assert.strictEqual(new Set(hues).size, 1, label + "：色相統一");
+        assert.ok(toneDist(tones[0], tones[1]) >= 150,
+          label + "：色調明度差顯著（距離 ≥150）");
+      }
+    });
+  });
+});
+
+console.log("Harmony rule tests passed");
