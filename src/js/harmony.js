@@ -24,6 +24,64 @@
     l.textContent = text;
     return l;
   }
+  // 標準配色用：小色相環，標出範例取色點並連出幾何
+  function renderHueWheelMini(colors) {
+    var SVG_NS = "http://www.w3.org/2000/svg";
+    var size = 120, cx = 60, cy = 60, rDot = 44;
+    function polar(r, hueNum) {            // 8:Y 正上方、順時針
+      var deg = (hueNum - 8) * 15;
+      var rad = (deg - 90) * Math.PI / 180;
+      return { x: cx + r * Math.cos(rad), y: cy + r * Math.sin(rad) };
+    }
+    var svg = document.createElementNS(SVG_NS, "svg");
+    svg.setAttribute("class", "hue-wheel-mini");
+    svg.setAttribute("width", size);
+    svg.setAttribute("height", size);
+    svg.setAttribute("viewBox", "0 0 " + size + " " + size);
+
+    // 背景 24 點（淡）
+    for (var n = 1; n <= 24; n++) {
+      var p = polar(rDot, n);
+      var dot = document.createElementNS(SVG_NS, "circle");
+      dot.setAttribute("cx", p.x); dot.setAttribute("cy", p.y);
+      dot.setAttribute("r", 2.5);
+      dot.setAttribute("fill", getColor("v", n));
+      dot.setAttribute("opacity", "0.25");
+      svg.appendChild(dot);
+    }
+
+    // 取出有彩色範例色的色相（依色相排序以連出多邊形）
+    var hues = colors
+      .map(function (notation) { return parseColorNotation(notation); })
+      .filter(function (pc) { return pc.type === "chromatic"; })
+      .map(function (pc) { return pc.hueNum; })
+      .sort(function (a, b) { return a - b; });
+
+    // 連線（2 點＝線；≥3 點＝封閉多邊形）
+    if (hues.length >= 2) {
+      var pts = hues.map(function (hn) { var q = polar(rDot, hn); return q.x + "," + q.y; });
+      var shape = document.createElementNS(SVG_NS, hues.length >= 3 ? "polygon" : "polyline");
+      shape.setAttribute("points", pts.join(" "));
+      shape.setAttribute("fill", hues.length >= 3 ? "rgba(80,80,80,0.08)" : "none");
+      shape.setAttribute("stroke", "#666");
+      shape.setAttribute("stroke-width", "1.2");
+      svg.appendChild(shape);
+    }
+
+    // 標出取色點（實心、較大）
+    hues.forEach(function (hn) {
+      var q = polar(rDot, hn);
+      var c = document.createElementNS(SVG_NS, "circle");
+      c.setAttribute("cx", q.x); c.setAttribute("cy", q.y);
+      c.setAttribute("r", 5);
+      c.setAttribute("fill", getColor("v", hn));
+      c.setAttribute("stroke", "#333");
+      c.setAttribute("stroke-width", "1");
+      svg.appendChild(c);
+    });
+    return svg;
+  }
+
   function renderExample(example, geometry) {
     var wrap = document.createElement("div");
     wrap.className = "scheme-example";
