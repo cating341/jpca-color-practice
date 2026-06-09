@@ -100,10 +100,7 @@
     }
     wrap.appendChild(row);
     wrap.appendChild(noteRow);
-    var cap = document.createElement("div");
-    cap.className = "scheme-caption";
-    cap.textContent = example.label;
-    wrap.appendChild(cap);
+    // 不顯示顏色說明文字（example.label）；色塊下方僅保留 PCCS 記號註記
     return wrap;
   }
 

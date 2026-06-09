@@ -35,7 +35,6 @@
 .scheme-swatch { min-width: 0; flex-basis: 0; }
 .scheme-note-row { display: flex; margin-top: 4px; }
 .scheme-note { text-align: center; font-size: .8rem; color: #666; flex-basis: 0; }
-.scheme-caption { font-size: .85rem; color: #444; margin-top: .35rem; }
 
 /* SVG 色相環（Task 5） */
 .hue-wheel-mini { display: block; margin: 0 auto .5rem; }
